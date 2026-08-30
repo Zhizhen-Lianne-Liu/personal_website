@@ -1,0 +1,102 @@
+---
+import PageLayout from "@/layouts/PageLayout.astro";
+import { projects } from "@/data/projects";
+import { sitePath } from "@/lib/urls";
+---
+
+<PageLayout
+  title="Selected work"
+  eyebrow="Projects"
+  description="A deliberately small collection of work, documented with context rather than inflated claims."
+>
+  <div class="card-grid">
+    {
+      projects.map((project) => (
+        <article class="card project-card">
+          <div class="project-accent" aria-hidden="true">
+            <>
+              <span />
+              <span />
+              <span />
+            </>
+          </div>
+          <div class="card-body">
+            <p class="card-kicker">
+              {project.status} · {project.year}
+            </p>
+            <h2>{project.title}</h2>
+            <p>{project.summary}</p>
+            <ul class="tag-list">
+              {project.tags.map((tag) => (
+                <li>{tag}</li>
+              ))}
+            </ul>
+            {project.href && (
+              <a class="project-link" href={sitePath(project.href)}>
+                Read the project note <span aria-hidden="true">↗</span>
+              </a>
+            )}
+          </div>
+        </article>
+      ))
+    }
+    <aside class="review-card">
+      <p class="card-kicker">Content review</p>
+      <h2>More work is being considered.</h2>
+      <p>
+        Older experiments will appear here only when they still represent the
+        work accurately.
+      </p>
+    </aside>
+  </div>
+</PageLayout>
+
+<style>
+  .project-card h2,
+  .review-card h2 {
+    margin-bottom: 16px;
+    font-size: clamp(2rem, 4vw, 3rem);
+  }
+  .project-card p,
+  .review-card p {
+    color: var(--muted);
+  }
+  .project-accent {
+    display: flex;
+    min-height: 150px;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    border-bottom: var(--line);
+    background: var(--green);
+  }
+  .project-accent span {
+    display: block;
+    width: 54px;
+    height: 54px;
+    border: var(--line);
+    border-radius: 50%;
+    background: var(--coral);
+  }
+  .project-accent span:nth-child(2) {
+    border-radius: 8px;
+    background: var(--yellow);
+    transform: rotate(8deg);
+  }
+  .project-accent span:nth-child(3) {
+    background: var(--blue);
+  }
+  .project-card .tag-list {
+    margin-block: 24px;
+  }
+  .project-link {
+    font-weight: 850;
+  }
+  .review-card {
+    padding: clamp(28px, 5vw, 48px);
+    border: var(--line);
+    border-radius: var(--radius);
+    background: var(--yellow);
+    box-shadow: var(--shadow);
+  }
+</style>

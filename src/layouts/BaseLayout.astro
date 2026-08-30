@@ -9,6 +9,7 @@ interface Props {
   description: string;
   image?: string;
   article?: boolean;
+  chrome?: boolean;
 }
 
 const {
@@ -16,6 +17,7 @@ const {
   description,
   image = "/social-card.svg",
   article = false,
+  chrome = true,
 } = Astro.props;
 const pageTitle = title === "Lianne Liu" ? title : `${title} — Lianne Liu`;
 const canonical = new URL(Astro.url.pathname, Astro.site);
@@ -49,12 +51,12 @@ const socialImage = new URL(sitePath(image), Astro.site);
     <meta name="twitter:image" content={socialImage} />
     <title>{pageTitle}</title>
   </head>
-  <body>
+  <body class:list={{ "os-body": !chrome }}>
     <a class="skip-link" href="#main-content">Skip to content</a>
-    <Header />
+    {chrome && <Header />}
     <main id="main-content">
       <slot />
     </main>
-    <Footer />
+    {chrome && <Footer />}
   </body>
 </html>

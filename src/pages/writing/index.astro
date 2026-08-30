@@ -1,0 +1,97 @@
+---
+import { getCollection } from "astro:content";
+import PageLayout from "@/layouts/PageLayout.astro";
+import { sitePath } from "@/lib/urls";
+
+const posts = (await getCollection("writing", ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf(),
+);
+const formatDate = (date: Date) =>
+  new Intl.DateTimeFormat("en-GB", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(date);
+---
+
+<PageLayout
+  title="Writing"
+  eyebrow="Notes & essays"
+  description="Ideas about design, technology, process, and the things worth reconsidering."
+>
+  <div class="writing-list">
+    {
+      posts.map((post) => (
+        <article>
+          <p>
+            <time datetime={post.data.publishedAt.toISOString()}>
+              {formatDate(post.data.publishedAt)}
+            </time>
+          </p>
+          <div>
+            <>
+              <h2>
+                <a href={sitePath(`/writing/${post.id}/`)}>{post.data.title}</a>
+              </h2>
+              <p>{post.data.description}</p>
+              <ul class="tag-list">
+                {post.data.tags.map((tag) => (
+                  <li>{tag}</li>
+                ))}
+              </ul>
+            </>
+          </div>
+          <a
+            class="read-arrow"
+            href={sitePath(`/writing/${post.id}/`)}
+            aria-label={`Read ${post.data.title}`}
+          >
+            <span aria-hidden="true">↗</span>
+          </a>
+        </article>
+      ))
+    }
+  </div>
+</PageLayout>
+
+<style>
+  .writing-list {
+    border-top: var(--line);
+  }
+  article {
+    display: grid;
+    grid-template-columns: 160px 1fr auto;
+    gap: 32px;
+    padding-block: 34px;
+    border-bottom: var(--line);
+  }
+  article > p {
+    color: var(--muted);
+    font-size: 0.82rem;
+  }
+  h2 {
+    margin-bottom: 12px;
+    font-size: clamp(1.8rem, 4vw, 3rem);
+  }
+  h2 a {
+    text-decoration: none;
+  }
+  article div > p {
+    max-width: 650px;
+    margin-bottom: 20px;
+    color: var(--muted);
+  }
+  .read-arrow {
+    align-self: center;
+    font-size: 1.6rem;
+    text-decoration: none;
+  }
+  @media (max-width: 680px) {
+    article {
+      grid-template-columns: 1fr auto;
+    }
+    article > p {
+      grid-column: 1 / -1;
+    }
+  }
+</style>

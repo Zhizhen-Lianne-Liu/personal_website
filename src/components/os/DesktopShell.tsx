@@ -1,0 +1,781 @@
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import {
+  BookOpenText,
+  BriefcaseBusiness,
+  CircleUserRound,
+  Code2,
+  ExternalLink,
+  House,
+  Mail,
+  Maximize2,
+  MousePointer2,
+  Sparkles,
+  X,
+  type LucideIcon,
+} from "lucide-react";
+import { useEffect, useReducer, useRef, useState, type ReactNode } from "react";
+import { Rnd } from "react-rnd";
+import "./desktop.css";
+
+type AppId = "welcome" | "work" | "writing" | "about" | "contact";
+
+interface AppDefinition {
+  id: AppId;
+  label: string;
+  subtitle: string;
+  route: string;
+  icon: LucideIcon;
+  color: string;
+}
+
+interface WindowState {
+  open: boolean;
+  maximized: boolean;
+  z: number;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+type DesktopState = Record<AppId, WindowState>;
+type Action =
+  | { type: "open" | "focus" | "close" | "maximize"; id: AppId }
+  | { type: "move"; id: AppId; x: number; y: number }
+  | {
+      type: "resize";
+      id: AppId;
+      width: number;
+      height: number;
+      x: number;
+      y: number;
+    }
+  | { type: "tidy" };
+
+const apps: AppDefinition[] = [
+  {
+    id: "welcome",
+    label: "Start here",
+    subtitle: "Welcome",
+    route: "/welcome/",
+    icon: House,
+    color: "var(--os-coral)",
+  },
+  {
+    id: "work",
+    label: "Selected work",
+    subtitle: "Projects",
+    route: "/work/",
+    icon: BriefcaseBusiness,
+    color: "var(--os-blue)",
+  },
+  {
+    id: "writing",
+    label: "Writing",
+    subtitle: "Notes & essays",
+    route: "/writing/",
+    icon: BookOpenText,
+    color: "var(--os-yellow)",
+  },
+  {
+    id: "about",
+    label: "About me",
+    subtitle: "A short intro",
+    route: "/about/",
+    icon: CircleUserRound,
+    color: "var(--os-green)",
+  },
+  {
+    id: "contact",
+    label: "Say hello",
+    subtitle: "Contact",
+    route: "/contact/",
+    icon: Mail,
+    color: "var(--os-lilac)",
+  },
+];
+
+const initialState: DesktopState = {
+  welcome: {
+    open: true,
+    maximized: false,
+    z: 2,
+    x: 72,
+    y: 58,
+    width: 610,
+    height: 432,
+  },
+  work: {
+    open: true,
+    maximized: false,
+    z: 3,
+    x: 650,
+    y: 150,
+    width: 530,
+    height: 400,
+  },
+  writing: {
+    open: false,
+    maximized: false,
+    z: 1,
+    x: 410,
+    y: 80,
+    width: 550,
+    height: 430,
+  },
+  about: {
+    open: false,
+    maximized: false,
+    z: 1,
+    x: 180,
+    y: 160,
+    width: 480,
+    height: 390,
+  },
+  contact: {
+    open: false,
+    maximized: false,
+    z: 1,
+    x: 520,
+    y: 190,
+    width: 470,
+    height: 330,
+  },
+};
+
+function nextZ(state: DesktopState) {
+  return Math.max(...Object.values(state).map((window) => window.z)) + 1;
+}
+
+function reducer(state: DesktopState, action: Action): DesktopState {
+  if (action.type === "tidy") {
+    const positions: Record<AppId, [number, number]> = {
+      welcome: [52, 52],
+      work: [680, 92],
+      writing: [260, 150],
+      about: [620, 210],
+      contact: [430, 260],
+    };
+
+    return Object.fromEntries(
+      Object.entries(state).map(([id, window]) => [
+        id,
+        {
+          ...window,
+          x: positions[id as AppId][0],
+          y: positions[id as AppId][1],
+          maximized: false,
+        },
+      ]),
+    ) as DesktopState;
+  }
+
+  const current = state[action.id];
+  if (action.type === "open") {
+    return {
+      ...state,
+      [action.id]: {
+        ...current,
+        open: true,
+        z: nextZ(state),
+      },
+    };
+  }
+  if (action.type === "focus") {
+    if (
+      current.z === Math.max(...Object.values(state).map((window) => window.z))
+    )
+      return state;
+    return { ...state, [action.id]: { ...current, z: nextZ(state) } };
+  }
+  if (action.type === "close")
+    return {
+      ...state,
+      [action.id]: { ...current, open: false },
+    };
+  if (action.type === "maximize") {
+    return {
+      ...state,
+      [action.id]: {
+        ...current,
+        maximized: !current.maximized,
+        z: nextZ(state),
+      },
+    };
+  }
+  if (action.type === "move")
+    return { ...state, [action.id]: { ...current, x: action.x, y: action.y } };
+  if (action.type !== "resize") return state;
+  return {
+    ...state,
+    [action.id]: {
+      ...current,
+      width: action.width,
+      height: action.height,
+      x: action.x,
+      y: action.y,
+    },
+  };
+}
+
+function joinPath(base: string, route: string) {
+  const cleanBase = base.endsWith("/") ? base : `${base}/`;
+  return route === "/" ? cleanBase : `${cleanBase}${route.replace(/^\/+/, "")}`;
+}
+
+function AppContent({
+  id,
+  basePath,
+  open,
+}: {
+  id: AppId;
+  basePath: string;
+  open: (id: AppId) => void;
+}) {
+  if (id === "welcome") {
+    return (
+      <div className="welcome-app">
+        <div className="welcome-copy">
+          <p className="os-overline">
+            <Sparkles size={15} /> Lianne&rsquo;s place on the internet
+          </p>
+          <h1>Ideas, work &amp; curious detours.</h1>
+          <p>
+            A playful home for the things I make, learn, and want to remember.
+          </p>
+          <div className="welcome-actions">
+            <button type="button" onClick={() => open("work")}>
+              Open my work
+            </button>
+            <button type="button" onClick={() => open("about")}>
+              About me
+            </button>
+          </div>
+        </div>
+        <div className="welcome-art" aria-hidden="true">
+          <span className="sun">LL</span>
+          <span className="spark spark-one">✦</span>
+          <span className="spark spark-two">✷</span>
+          <span className="scribble">
+            always
+            <br />
+            curious
+          </span>
+        </div>
+      </div>
+    );
+  }
+
+  if (id === "work") {
+    return (
+      <div className="work-app">
+        <div className="app-heading">
+          <div>
+            <p className="os-overline">Selected project · 2026</p>
+            <h2>A calmer personal website</h2>
+          </div>
+          <span className="status-pill">In progress</span>
+        </div>
+        <div className="project-preview" aria-hidden="true">
+          <div className="preview-sidebar">
+            <i></i>
+            <i></i>
+            <i></i>
+          </div>
+          <div className="preview-canvas">
+            <strong>Make it clear.</strong>
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        </div>
+        <p>
+          Editorial content meets an original desktop interface, built as a fast
+          static site.
+        </p>
+        <a
+          className="inline-link"
+          href={joinPath(basePath, "/writing/building-with-less/")}
+        >
+          Read the build note <ExternalLink size={15} />
+        </a>
+      </div>
+    );
+  }
+
+  if (id === "writing") {
+    return (
+      <div className="writing-app">
+        <div className="app-heading">
+          <div>
+            <p className="os-overline">Notebook</p>
+            <h2>Writing</h2>
+          </div>
+          <BookOpenText size={30} />
+        </div>
+        <a
+          className="note-row"
+          href={joinPath(basePath, "/writing/building-with-less/")}
+        >
+          <span className="note-date">30.08.26</span>
+          <span>
+            <strong>Building this site with less</strong>
+            <small>Design, Astro, and deliberate migration.</small>
+          </span>
+          <span aria-hidden="true">↗</span>
+        </a>
+        <div className="empty-note">
+          <Sparkles size={18} />
+          <span>More notes are being reviewed before they move in.</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (id === "about") {
+    return (
+      <div className="about-app">
+        <div className="portrait-placeholder" aria-hidden="true">
+          <span>LL</span>
+          <i>✦</i>
+        </div>
+        <div>
+          <p className="os-overline">A short introduction</p>
+          <h2>Hello, I&rsquo;m Lianne.</h2>
+          <p>
+            I care about making complicated things more legible, useful, and
+            human. This site is a growing record of selected work and ideas.
+          </p>
+          <button
+            type="button"
+            className="text-button"
+            onClick={() => open("contact")}
+          >
+            Say hello <span aria-hidden="true">→</span>
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="contact-app">
+      <p className="os-overline">Contact card</p>
+      <h2>Let&rsquo;s make something interesting.</h2>
+      <p>
+        The best current place to find me is GitHub. More contact details can be
+        added after review.
+      </p>
+      <a
+        className="contact-link"
+        href="https://github.com/Zhizhen-Lianne-Liu"
+        target="_blank"
+        rel="noreferrer"
+      >
+        <Code2 size={22} /> GitHub <ExternalLink size={16} />
+      </a>
+    </div>
+  );
+}
+
+function WindowFrame({
+  app,
+  state,
+  isDesktop,
+  basePath,
+  dispatch,
+}: {
+  app: AppDefinition;
+  state: WindowState;
+  isDesktop: boolean;
+  basePath: string;
+  dispatch: (action: Action) => void;
+}) {
+  const content = (
+    <section
+      className={`os-window ${state.maximized ? "is-maximized" : ""}`}
+      aria-label={`${app.label} window`}
+      onPointerDown={() => dispatch({ type: "focus", id: app.id })}
+    >
+      <div
+        className="os-titlebar"
+        onDoubleClick={() => dispatch({ type: "maximize", id: app.id })}
+      >
+        <div className="os-window-controls">
+          <button
+            className="control-close"
+            type="button"
+            aria-label={`Close ${app.label}`}
+            onClick={() => dispatch({ type: "close", id: app.id })}
+          >
+            <X size={11} />
+          </button>
+          <button
+            className="control-maximize"
+            type="button"
+            aria-label={`${state.maximized ? "Restore" : "Maximize"} ${app.label}`}
+            onClick={() => dispatch({ type: "maximize", id: app.id })}
+          >
+            <Maximize2 size={10} />
+          </button>
+        </div>
+        <div className="window-title">
+          <app.icon size={15} />
+          <span>{app.label}</span>
+        </div>
+        <a
+          href={joinPath(basePath, app.route)}
+          className="window-route"
+          target="_blank"
+          rel="noreferrer"
+          aria-label={`Pop ${app.label} into a new tab`}
+        >
+          <ExternalLink size={13} />
+        </a>
+      </div>
+      <div className="os-window-body">
+        <AppContent
+          id={app.id}
+          basePath={basePath}
+          open={(id) => dispatch({ type: "open", id })}
+        />
+      </div>
+    </section>
+  );
+
+  if (!isDesktop) return <div className="mobile-window">{content}</div>;
+
+  if (state.maximized) {
+    return (
+      <div className="maximized-window" style={{ zIndex: state.z }}>
+        {content}
+      </div>
+    );
+  }
+
+  return (
+    <Rnd
+      bounds=".os-wallpaper"
+      cancel="button,a,.os-window-body"
+      dragHandleClassName="os-titlebar"
+      minWidth={340}
+      minHeight={250}
+      position={{ x: state.x, y: state.y }}
+      size={{ width: state.width, height: state.height }}
+      style={{ zIndex: state.z }}
+      onDragStart={() => dispatch({ type: "focus", id: app.id })}
+      onDragStop={(_, data) =>
+        dispatch({ type: "move", id: app.id, x: data.x, y: data.y })
+      }
+      onResizeStart={() => dispatch({ type: "focus", id: app.id })}
+      onResizeStop={(_, __, element, ___, position) =>
+        dispatch({
+          type: "resize",
+          id: app.id,
+          width: element.offsetWidth,
+          height: element.offsetHeight,
+          x: position.x,
+          y: position.y,
+        })
+      }
+    >
+      {content}
+    </Rnd>
+  );
+}
+
+function Menu({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <DropdownMenu.Root>
+      <DropdownMenu.Trigger className="menu-trigger">
+        {label}
+      </DropdownMenu.Trigger>
+      <DropdownMenu.Portal>
+        <DropdownMenu.Content
+          className="menu-content"
+          sideOffset={7}
+          align="start"
+        >
+          {children}
+        </DropdownMenu.Content>
+      </DropdownMenu.Portal>
+    </DropdownMenu.Root>
+  );
+}
+
+export default function DesktopShell({
+  basePath = "/",
+}: {
+  basePath?: string;
+}) {
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const [isDesktop, setIsDesktop] = useState(false);
+  const [clock, setClock] = useState("--:--");
+  const wallpaperRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const media = window.matchMedia("(min-width: 860px)");
+    const update = () => setIsDesktop(media.matches);
+    update();
+    media.addEventListener("change", update);
+    return () => media.removeEventListener("change", update);
+  }, []);
+
+  useEffect(() => {
+    const update = () =>
+      setClock(
+        new Intl.DateTimeFormat("en-GB", {
+          hour: "2-digit",
+          minute: "2-digit",
+        }).format(new Date()),
+      );
+    update();
+    const timer = window.setInterval(update, 30_000);
+    return () => window.clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    const wallpaper = wallpaperRef.current;
+    if (!wallpaper) return;
+
+    const precisePointer = window.matchMedia("(pointer: fine)");
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (!precisePointer.matches || reducedMotion.matches) return;
+
+    const field = wallpaper.querySelector<HTMLElement>(".lava-field");
+    const blobs = Array.from(
+      wallpaper.querySelectorAll<HTMLElement>(".lava-blob"),
+    );
+    let frame = 0;
+    let pointerX = 0;
+    let pointerY = 0;
+
+    const renderPointer = () => {
+      frame = 0;
+      const wallpaperRect = wallpaper.getBoundingClientRect();
+      const normalizedX =
+        (pointerX - wallpaperRect.left) / wallpaperRect.width - 0.5;
+      const normalizedY =
+        (pointerY - wallpaperRect.top) / wallpaperRect.height - 0.5;
+      const repelRadius = Math.min(
+        310,
+        Math.max(190, wallpaperRect.width * 0.22),
+      );
+
+      field?.style.setProperty(
+        "--cursor-x",
+        `${((pointerX - wallpaperRect.left) / wallpaperRect.width) * 100}%`,
+      );
+      field?.style.setProperty(
+        "--cursor-y",
+        `${((pointerY - wallpaperRect.top) / wallpaperRect.height) * 100}%`,
+      );
+      field?.style.setProperty("--cursor-active", "1");
+
+      blobs.forEach((blob) => {
+        const blobRect = blob.getBoundingClientRect();
+        const centerX = blobRect.left + blobRect.width / 2;
+        const centerY = blobRect.top + blobRect.height / 2;
+        const deltaX = centerX - pointerX;
+        const deltaY = centerY - pointerY;
+        const distance = Math.max(1, Math.hypot(deltaX, deltaY));
+        const depth = Number(blob.dataset.depth ?? 10);
+        const proximity = Math.max(0, 1 - distance / repelRadius);
+        const repelStrength = proximity * (18 + depth * 1.25);
+        const repelX = (deltaX / distance) * repelStrength;
+        const repelY = (deltaY / distance) * repelStrength;
+        const parallaxX = normalizedX * depth;
+        const parallaxY = normalizedY * depth * 0.72;
+
+        blob.style.setProperty("--mouse-x", `${parallaxX + repelX}px`);
+        blob.style.setProperty("--mouse-y", `${parallaxY + repelY}px`);
+      });
+    };
+
+    const handlePointerMove = (event: PointerEvent) => {
+      const target = event.target;
+      if (
+        target instanceof Element &&
+        target.closest(".os-window, .os-dock, .desktop-shortcut")
+      ) {
+        resetPointer();
+        return;
+      }
+
+      pointerX = event.clientX;
+      pointerY = event.clientY;
+      if (!frame) frame = window.requestAnimationFrame(renderPointer);
+    };
+
+    const resetPointer = () => {
+      if (frame) window.cancelAnimationFrame(frame);
+      frame = 0;
+      field?.style.setProperty("--cursor-active", "0");
+      blobs.forEach((blob) => {
+        blob.style.setProperty("--mouse-x", "0px");
+        blob.style.setProperty("--mouse-y", "0px");
+      });
+    };
+
+    wallpaper.addEventListener("pointermove", handlePointerMove, {
+      passive: true,
+    });
+    wallpaper.addEventListener("pointerleave", resetPointer);
+
+    return () => {
+      wallpaper.removeEventListener("pointermove", handlePointerMove);
+      wallpaper.removeEventListener("pointerleave", resetPointer);
+      if (frame) window.cancelAnimationFrame(frame);
+    };
+  }, []);
+
+  const openApp = (id: AppId) => dispatch({ type: "open", id });
+  const openApps = apps.filter((app) => state[app.id].open);
+
+  return (
+    <div className="os-shell">
+      <header className="os-menubar">
+        <div className="menu-left">
+          <button
+            className="os-mark"
+            type="button"
+            aria-label="Open welcome window"
+            onClick={() => openApp("welcome")}
+          >
+            LL
+          </button>
+          <Menu label="Lianne">
+            <DropdownMenu.Item
+              className="menu-item"
+              onSelect={() => openApp("about")}
+            >
+              About this site
+            </DropdownMenu.Item>
+            <DropdownMenu.Item
+              className="menu-item"
+              onSelect={() => openApp("contact")}
+            >
+              Contact
+            </DropdownMenu.Item>
+          </Menu>
+          <Menu label="Go">
+            <DropdownMenu.Item
+              className="menu-item"
+              onSelect={() => openApp("work")}
+            >
+              Selected work
+            </DropdownMenu.Item>
+            <DropdownMenu.Item
+              className="menu-item"
+              onSelect={() => openApp("writing")}
+            >
+              Writing
+            </DropdownMenu.Item>
+            <DropdownMenu.Item
+              className="menu-item"
+              onSelect={() => openApp("about")}
+            >
+              About
+            </DropdownMenu.Item>
+          </Menu>
+          <Menu label="View">
+            <DropdownMenu.Item
+              className="menu-item"
+              onSelect={() => dispatch({ type: "tidy" })}
+            >
+              Tidy windows
+            </DropdownMenu.Item>
+          </Menu>
+        </div>
+        <div className="menu-right">
+          <span className="desktop-hint">
+            <MousePointer2 size={13} /> windows move
+          </span>
+          <span>{clock}</span>
+        </div>
+      </header>
+
+      <main className="os-wallpaper" ref={wallpaperRef}>
+        <div className="lava-field" aria-hidden="true">
+          <span className="lava-blob lava-coral" data-depth="12"></span>
+          <span className="lava-blob lava-yellow" data-depth="19"></span>
+          <span className="lava-blob lava-blue" data-depth="9"></span>
+          <span className="lava-blob lava-green" data-depth="16"></span>
+          <span className="lava-blob lava-lilac" data-depth="7"></span>
+          <span className="lava-blob lava-coral-small" data-depth="27"></span>
+          <span className="lava-blob lava-blue-small" data-depth="23"></span>
+        </div>
+        <div className="desktop-shortcuts" aria-label="Desktop shortcuts">
+          {apps
+            .filter((app) => app.id !== "welcome")
+            .map((app) => (
+              <a
+                key={app.id}
+                href={joinPath(basePath, app.route)}
+                className="desktop-shortcut"
+                onClick={(event) => {
+                  event.preventDefault();
+                  openApp(app.id);
+                }}
+              >
+                <span
+                  className="shortcut-icon"
+                  style={{ background: app.color }}
+                >
+                  <app.icon size={31} strokeWidth={1.8} />
+                </span>
+                <span>{app.label}</span>
+              </a>
+            ))}
+        </div>
+
+        <div className="window-layer">
+          {openApps.map((app) => (
+            <WindowFrame
+              key={app.id}
+              app={app}
+              state={state[app.id]}
+              isDesktop={isDesktop}
+              basePath={basePath}
+              dispatch={dispatch}
+            />
+          ))}
+        </div>
+
+        <nav className="os-dock" aria-label="Applications">
+          {apps.map((app) => {
+            const Icon = app.icon;
+            const active = state[app.id].open;
+            return (
+              <button
+                key={app.id}
+                type="button"
+                className={active ? "is-active" : ""}
+                aria-label={`Open ${app.label}`}
+                aria-pressed={active}
+                onClick={() => openApp(app.id)}
+              >
+                <span style={{ background: app.color }}>
+                  <Icon size={24} />
+                </span>
+                <small>{app.subtitle}</small>
+              </button>
+            );
+          })}
+          <i aria-hidden="true"></i>
+          <a
+            href="https://github.com/Zhizhen-Lianne-Liu"
+            target="_blank"
+            rel="noreferrer"
+            aria-label="Lianne on GitHub"
+          >
+            <span>
+              <Code2 size={24} />
+            </span>
+            <small>GitHub</small>
+          </a>
+        </nav>
+      </main>
+    </div>
+  );
+}
