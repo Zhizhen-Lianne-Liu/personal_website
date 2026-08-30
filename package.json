@@ -1,0 +1,35 @@
+{
+  "name": "personal-site",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "check:links": "linkinator dist --recurse --skip '^(mailto:|https?://)'",
+    "test:a11y": "playwright test",
+    "validate": "npm run format:check && npm run check && npm run build && npm run check:links"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "^7.0.8",
+    "@astrojs/rss": "^4.0.19",
+    "@astrojs/sitemap": "^3.7.3",
+    "astro": "^7.2.9"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.6",
+    "@playwright/test": "^1.55.0",
+    "linkinator": "^8.1.0",
+    "prettier": "^3.9.6",
+    "prettier-plugin-astro": "^0.14.1",
+    "typescript": "^6.0.3"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  }
+}
