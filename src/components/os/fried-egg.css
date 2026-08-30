@@ -1,7 +1,7 @@
 .fried-egg-scene {
   position: absolute;
   inset: 0;
-  z-index: 4;
+  z-index: 0;
   display: grid;
   overflow: hidden;
   place-items: center;
@@ -107,28 +107,42 @@
   left: 50%;
   width: var(--piece-width);
   height: var(--piece-height);
-  border: 2px solid var(--os-ink);
   opacity: 0;
   animation: egg-piece-fly 1.05s cubic-bezier(0.16, 0.74, 0.28, 1.15)
     var(--piece-delay) forwards;
 }
 
-.fragment-white {
+.egg-fragment::before {
+  position: absolute;
+  inset: 0;
+  border: 2px solid var(--os-ink);
+  content: "";
+}
+
+.fragment-white::before {
   border-radius: 63% 37% 58% 42% / 44% 62% 38% 56%;
   background: var(--os-cream);
 }
 
-.fragment-yolk {
+.fragment-yolk::before {
   border-radius: 55% 45% 69% 31% / 39% 57% 43% 61%;
   background: var(--os-yellow);
 }
 
-.egg-fragment:nth-child(3n) {
+.egg-fragment:nth-child(3n)::before {
+  border: 0;
+  border-radius: 0;
   clip-path: polygon(7% 14%, 93% 0, 82% 89%, 19% 100%);
+  filter: drop-shadow(2px 0 0 var(--os-ink)) drop-shadow(-2px 0 0 var(--os-ink))
+    drop-shadow(0 2px 0 var(--os-ink)) drop-shadow(0 -2px 0 var(--os-ink));
 }
 
-.egg-fragment:nth-child(4n) {
+.egg-fragment:nth-child(4n)::before {
+  border: 0;
+  border-radius: 0;
   clip-path: polygon(19% 0, 100% 29%, 74% 100%, 0 76%);
+  filter: drop-shadow(2px 0 0 var(--os-ink)) drop-shadow(-2px 0 0 var(--os-ink))
+    drop-shadow(0 2px 0 var(--os-ink)) drop-shadow(0 -2px 0 var(--os-ink));
 }
 
 .egg-reset {
