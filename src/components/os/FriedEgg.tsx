@@ -305,7 +305,6 @@ export default function FriedEgg() {
             </g>
           </svg>
         </button>
-        {!burst && <span className="egg-hint">click to crack</span>}
       </div>
 
       {burst && (
