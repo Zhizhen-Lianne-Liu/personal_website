@@ -527,6 +527,18 @@
     }
   }
 
+  @media (pointer: fine) {
+    html,
+    body,
+    *,
+    *::before,
+    *::after {
+      cursor:
+        url("../assets/chopsticks-cursor.svg") 27 5,
+        auto !important;
+    }
+  }
+
   @media (max-width: 760px) {
     .shell,
     .shell-narrow {
