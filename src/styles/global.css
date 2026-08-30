@@ -528,14 +528,12 @@
   }
 
   @media (pointer: fine) {
-    html,
-    body,
-    *,
-    *::before,
-    *::after {
-      cursor:
-        url("../assets/chopsticks-cursor.svg") 27 5,
-        auto !important;
+    html[data-chopsticks-cursor="true"],
+    html[data-chopsticks-cursor="true"] body,
+    html[data-chopsticks-cursor="true"] *,
+    html[data-chopsticks-cursor="true"] *::before,
+    html[data-chopsticks-cursor="true"] *::after {
+      cursor: none !important;
     }
   }
 

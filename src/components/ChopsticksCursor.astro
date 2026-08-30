@@ -1,0 +1,157 @@
+<div class="chopsticks-cursor" data-chopsticks-cursor aria-hidden="true">
+  <span class="chopsticks-cursor-body">
+    <span class="chopstick chopstick-top"></span>
+    <span class="chopstick chopstick-bottom"></span>
+  </span>
+</div>
+
+<script>
+  const cursor = document.querySelector<HTMLElement>(
+    "[data-chopsticks-cursor]",
+  );
+  const precisePointer = window.matchMedia("(pointer: fine)");
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+  if (cursor && precisePointer.matches) {
+    document.documentElement.dataset.chopsticksCursor = "true";
+    let clackTimer = 0;
+
+    const moveCursor = (event: PointerEvent) => {
+      cursor.style.transform = `translate3d(${event.clientX}px, ${event.clientY}px, 0)`;
+      cursor.dataset.visible = "true";
+    };
+
+    const hideCursor = () => {
+      cursor.dataset.visible = "false";
+    };
+
+    const clack = () => {
+      if (reducedMotion.matches) return;
+
+      window.clearTimeout(clackTimer);
+      cursor.classList.remove("is-clacking");
+      void cursor.offsetWidth;
+      cursor.classList.add("is-clacking");
+      clackTimer = window.setTimeout(() => {
+        cursor.classList.remove("is-clacking");
+      }, 220);
+    };
+
+    window.addEventListener("pointermove", moveCursor, { passive: true });
+    window.addEventListener("pointerdown", clack, { passive: true });
+    document.documentElement.addEventListener("mouseleave", hideCursor);
+    window.addEventListener("blur", hideCursor);
+  }
+</script>
+
+<style>
+  .chopsticks-cursor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100000;
+    width: 48px;
+    height: 36px;
+    pointer-events: none;
+    opacity: 0;
+    will-change: transform;
+  }
+
+  .chopsticks-cursor[data-visible="true"] {
+    opacity: 1;
+  }
+
+  .chopsticks-cursor-body {
+    position: absolute;
+    top: -12px;
+    left: -3px;
+    width: 48px;
+    height: 24px;
+    transform: rotate(12deg);
+    transform-origin: 3px 12px;
+  }
+
+  .chopstick {
+    position: absolute;
+    right: 1px;
+    width: 44px;
+    height: 4px;
+    border: 1.5px solid var(--ink);
+    border-radius: 999px;
+    transform-origin: calc(100% - 2px) 50%;
+  }
+
+  .chopstick::after {
+    position: absolute;
+    top: -1px;
+    right: 5px;
+    width: 8px;
+    height: 2px;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 42%);
+    content: "";
+  }
+
+  .chopstick-top {
+    top: 7px;
+    z-index: 1;
+    background: #b86a3c;
+    transform: rotate(-4deg);
+  }
+
+  .chopstick-bottom {
+    top: 13px;
+    background: #d89155;
+    transform: rotate(4deg);
+  }
+
+  .chopsticks-cursor.is-clacking .chopstick-top {
+    animation: chopstick-open-top 220ms cubic-bezier(0.2, 0.8, 0.3, 1);
+  }
+
+  .chopsticks-cursor.is-clacking .chopstick-bottom {
+    animation: chopstick-open-bottom 220ms cubic-bezier(0.2, 0.8, 0.3, 1);
+  }
+
+  @keyframes chopstick-open-top {
+    0%,
+    100% {
+      transform: rotate(-4deg);
+    }
+
+    42% {
+      transform: rotate(1deg);
+    }
+
+    72% {
+      transform: rotate(-5deg);
+    }
+  }
+
+  @keyframes chopstick-open-bottom {
+    0%,
+    100% {
+      transform: rotate(4deg);
+    }
+
+    42% {
+      transform: rotate(-1deg);
+    }
+
+    72% {
+      transform: rotate(5deg);
+    }
+  }
+
+  @media (pointer: coarse) {
+    .chopsticks-cursor {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .chopsticks-cursor.is-clacking .chopstick {
+      animation: none;
+    }
+  }
+</style>

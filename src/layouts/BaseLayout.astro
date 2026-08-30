@@ -1,6 +1,7 @@
 ---
 import Footer from "@/components/Footer.astro";
 import Header from "@/components/Header.astro";
+import ChopsticksCursor from "@/components/ChopsticksCursor.astro";
 import { sitePath } from "@/lib/urls";
 import "@/styles/global.css";
 
@@ -52,6 +53,7 @@ const socialImage = new URL(sitePath(image), Astro.site);
     <title>{pageTitle}</title>
   </head>
   <body class:list={{ "os-body": !chrome }}>
+    <ChopsticksCursor />
     <a class="skip-link" href="#main-content">Skip to content</a>
     {chrome && <Header />}
     <main id="main-content">
