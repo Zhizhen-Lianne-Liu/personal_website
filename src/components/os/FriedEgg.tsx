@@ -281,7 +281,14 @@ export default function FriedEgg() {
         <button
           className="fried-egg-button"
           type="button"
-          onClick={() => setBurst(true)}
+          onClick={(event) => {
+            const target = event.target;
+            const clickedEggShape =
+              target instanceof Element &&
+              target.closest(".egg-white, .egg-yolk, .egg-shine");
+
+            if (event.detail === 0 || clickedEggShape) setBurst(true);
+          }}
           disabled={burst}
           aria-label="Burst the fried egg"
         >

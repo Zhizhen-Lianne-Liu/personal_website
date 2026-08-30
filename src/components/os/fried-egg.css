@@ -31,7 +31,7 @@
   border: 0;
   background: transparent;
   filter: drop-shadow(8px 9px 0 rgb(30 30 27 / 35%));
-  cursor: crosshair;
+  cursor: default;
   animation: egg-idle 4.8s ease-in-out infinite;
 }
 
@@ -46,6 +46,7 @@
   stroke: var(--os-ink);
   stroke-width: 6;
   stroke-linejoin: round;
+  cursor: crosshair;
 }
 
 .egg-yolk-group {
@@ -60,6 +61,7 @@
   stroke: var(--os-ink);
   stroke-width: 6;
   stroke-linejoin: round;
+  cursor: crosshair;
 }
 
 .egg-shine {
@@ -67,6 +69,7 @@
   transform: rotate(-18deg);
   transform-box: fill-box;
   transform-origin: center;
+  cursor: crosshair;
 }
 
 .egg-motion[data-nearby="true"] .fried-egg-button {
