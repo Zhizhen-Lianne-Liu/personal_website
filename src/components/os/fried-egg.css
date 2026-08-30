@@ -130,19 +130,15 @@
 }
 
 .egg-fragment:nth-child(3n)::before {
-  border: 0;
-  border-radius: 0;
-  clip-path: polygon(7% 14%, 93% 0, 82% 89%, 19% 100%);
-  filter: drop-shadow(2px 0 0 var(--os-ink)) drop-shadow(-2px 0 0 var(--os-ink))
-    drop-shadow(0 2px 0 var(--os-ink)) drop-shadow(0 -2px 0 var(--os-ink));
+  border-radius: 47% 53% 39% 61% / 58% 42% 56% 44%;
 }
 
 .egg-fragment:nth-child(4n)::before {
-  border: 0;
-  border-radius: 0;
-  clip-path: polygon(19% 0, 100% 29%, 74% 100%, 0 76%);
-  filter: drop-shadow(2px 0 0 var(--os-ink)) drop-shadow(-2px 0 0 var(--os-ink))
-    drop-shadow(0 2px 0 var(--os-ink)) drop-shadow(0 -2px 0 var(--os-ink));
+  border-radius: 68% 32% 55% 45% / 41% 64% 36% 59%;
+}
+
+.egg-fragment:nth-child(5n)::before {
+  border-radius: 42% 58% 65% 35% / 67% 38% 62% 33%;
 }
 
 .egg-reset {

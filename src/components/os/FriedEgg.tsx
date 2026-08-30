@@ -188,9 +188,10 @@ const fragments: FragmentSpec[] = [
 ];
 
 function fragmentStyle(fragment: FragmentSpec): FragmentStyle {
+  const scatterMultiplier = 1.55;
   return {
-    "--piece-x": `${fragment.x}px`,
-    "--piece-y": `${fragment.y}px`,
+    "--piece-x": `${fragment.x * scatterMultiplier}px`,
+    "--piece-y": `${fragment.y * scatterMultiplier}px`,
     "--piece-rotation": `${fragment.rotation}deg`,
     "--piece-width": `${fragment.width}px`,
     "--piece-height": `${fragment.height}px`,
