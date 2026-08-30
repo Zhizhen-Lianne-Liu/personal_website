@@ -128,149 +128,6 @@ body.os-body {
     var(--os-paper);
 }
 
-.lava-field {
-  --cursor-active: 0;
-  --cursor-x: 50%;
-  --cursor-y: 50%;
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  overflow: hidden;
-  pointer-events: none;
-  user-select: none;
-}
-
-.lava-field::after {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(
-    circle 180px at var(--cursor-x) var(--cursor-y),
-    rgb(255 250 240 / 38%),
-    transparent 72%
-  );
-  content: "";
-  opacity: var(--cursor-active);
-  transition: opacity 260ms ease;
-}
-
-.lava-blob {
-  position: absolute;
-  display: block;
-  border: 2px solid var(--os-ink);
-  opacity: 0.72;
-  animation: lava-drift 22s ease-in-out infinite alternate;
-  will-change: transform;
-}
-
-.lava-coral {
-  top: -23%;
-  left: -8%;
-  width: min(38vw, 570px);
-  height: 74%;
-  border-radius: 38% 62% 56% 44% / 61% 34% 66% 39%;
-  background: var(--os-coral);
-  rotate: -18deg;
-}
-
-.lava-yellow {
-  top: 4%;
-  left: 34%;
-  width: min(25vw, 370px);
-  height: 62%;
-  border-radius: 59% 41% 35% 65% / 39% 57% 43% 61%;
-  background: var(--os-yellow);
-  rotate: 11deg;
-  animation-delay: -8s;
-  animation-duration: 27s;
-}
-
-.lava-blue {
-  right: -11%;
-  bottom: -26%;
-  width: min(48vw, 720px);
-  height: 77%;
-  border-radius: 64% 36% 51% 49% / 44% 62% 38% 56%;
-  background: var(--os-blue);
-  rotate: -9deg;
-  animation-delay: -14s;
-  animation-duration: 31s;
-}
-
-.lava-green {
-  top: -20%;
-  right: 5%;
-  width: min(27vw, 410px);
-  height: 49%;
-  border-radius: 43% 57% 69% 31% / 55% 37% 63% 45%;
-  background: var(--os-green);
-  rotate: 22deg;
-  animation-delay: -4s;
-  animation-duration: 25s;
-}
-
-.lava-lilac {
-  bottom: -34%;
-  left: 13%;
-  width: min(34vw, 510px);
-  height: 57%;
-  border-radius: 53% 47% 37% 63% / 69% 43% 57% 31%;
-  background: var(--os-lilac);
-  rotate: 17deg;
-  animation-delay: -19s;
-  animation-duration: 29s;
-}
-
-.lava-coral-small {
-  top: 10%;
-  right: 29%;
-  width: 96px;
-  height: 132px;
-  border-radius: 48% 52% 67% 33% / 39% 62% 38% 61%;
-  background: var(--os-coral);
-  rotate: -14deg;
-  animation-delay: -11s;
-  animation-duration: 18s;
-}
-
-.lava-blue-small {
-  bottom: 12%;
-  left: 5%;
-  width: 125px;
-  height: 87px;
-  border-radius: 63% 37% 55% 45% / 45% 62% 38% 55%;
-  background: var(--os-blue);
-  rotate: 9deg;
-  animation-delay: -6s;
-  animation-duration: 20s;
-}
-
-@keyframes lava-drift {
-  0% {
-    transform: translate3d(
-        calc(-2% + var(--mouse-x, 0px)),
-        calc(-2% + var(--mouse-y, 0px)),
-        0
-      )
-      scale(0.98, 1.03);
-  }
-  48% {
-    transform: translate3d(
-        calc(3% + var(--mouse-x, 0px)),
-        calc(1% + var(--mouse-y, 0px)),
-        0
-      )
-      scale(1.04, 0.97);
-  }
-  100% {
-    transform: translate3d(
-        calc(-1% + var(--mouse-x, 0px)),
-        calc(4% + var(--mouse-y, 0px)),
-        0
-      )
-      scale(0.97, 1.05);
-  }
-}
-
 .desktop-shortcuts {
   position: absolute;
   z-index: 1;
@@ -825,10 +682,6 @@ body.os-body {
     overflow: visible;
     padding: 18px 14px 98px;
   }
-  .lava-field {
-    position: fixed;
-    opacity: 0.32;
-  }
   .window-layer {
     position: relative;
     display: grid;
@@ -903,10 +756,6 @@ body.os-body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .lava-blob {
-    animation: none;
-  }
-
   .shortcut-icon,
   .os-dock button > span,
   .os-dock a > span {

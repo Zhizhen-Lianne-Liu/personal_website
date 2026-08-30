@@ -13,8 +13,9 @@ import {
   X,
   type LucideIcon,
 } from "lucide-react";
-import { useEffect, useReducer, useRef, useState, type ReactNode } from "react";
+import { useEffect, useReducer, useState, type ReactNode } from "react";
 import { Rnd } from "react-rnd";
+import FriedEgg from "./FriedEgg";
 import "./desktop.css";
 
 type AppId = "welcome" | "work" | "writing" | "about" | "contact";
@@ -511,7 +512,6 @@ export default function DesktopShell({
   const [state, dispatch] = useReducer(reducer, initialState);
   const [isDesktop, setIsDesktop] = useState(false);
   const [clock, setClock] = useState("--:--");
-  const wallpaperRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const media = window.matchMedia("(min-width: 860px)");
@@ -532,101 +532,6 @@ export default function DesktopShell({
     update();
     const timer = window.setInterval(update, 30_000);
     return () => window.clearInterval(timer);
-  }, []);
-
-  useEffect(() => {
-    const wallpaper = wallpaperRef.current;
-    if (!wallpaper) return;
-
-    const precisePointer = window.matchMedia("(pointer: fine)");
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    if (!precisePointer.matches || reducedMotion.matches) return;
-
-    const field = wallpaper.querySelector<HTMLElement>(".lava-field");
-    const blobs = Array.from(
-      wallpaper.querySelectorAll<HTMLElement>(".lava-blob"),
-    );
-    let frame = 0;
-    let pointerX = 0;
-    let pointerY = 0;
-
-    const renderPointer = () => {
-      frame = 0;
-      const wallpaperRect = wallpaper.getBoundingClientRect();
-      const normalizedX =
-        (pointerX - wallpaperRect.left) / wallpaperRect.width - 0.5;
-      const normalizedY =
-        (pointerY - wallpaperRect.top) / wallpaperRect.height - 0.5;
-      const repelRadius = Math.min(
-        310,
-        Math.max(190, wallpaperRect.width * 0.22),
-      );
-
-      field?.style.setProperty(
-        "--cursor-x",
-        `${((pointerX - wallpaperRect.left) / wallpaperRect.width) * 100}%`,
-      );
-      field?.style.setProperty(
-        "--cursor-y",
-        `${((pointerY - wallpaperRect.top) / wallpaperRect.height) * 100}%`,
-      );
-      field?.style.setProperty("--cursor-active", "1");
-
-      blobs.forEach((blob) => {
-        const blobRect = blob.getBoundingClientRect();
-        const centerX = blobRect.left + blobRect.width / 2;
-        const centerY = blobRect.top + blobRect.height / 2;
-        const deltaX = centerX - pointerX;
-        const deltaY = centerY - pointerY;
-        const distance = Math.max(1, Math.hypot(deltaX, deltaY));
-        const depth = Number(blob.dataset.depth ?? 10);
-        const proximity = Math.max(0, 1 - distance / repelRadius);
-        const repelStrength = proximity * (18 + depth * 1.25);
-        const repelX = (deltaX / distance) * repelStrength;
-        const repelY = (deltaY / distance) * repelStrength;
-        const parallaxX = normalizedX * depth;
-        const parallaxY = normalizedY * depth * 0.72;
-
-        blob.style.setProperty("--mouse-x", `${parallaxX + repelX}px`);
-        blob.style.setProperty("--mouse-y", `${parallaxY + repelY}px`);
-      });
-    };
-
-    const handlePointerMove = (event: PointerEvent) => {
-      const target = event.target;
-      if (
-        target instanceof Element &&
-        target.closest(".os-window, .os-dock, .desktop-shortcut")
-      ) {
-        resetPointer();
-        return;
-      }
-
-      pointerX = event.clientX;
-      pointerY = event.clientY;
-      if (!frame) frame = window.requestAnimationFrame(renderPointer);
-    };
-
-    const resetPointer = () => {
-      if (frame) window.cancelAnimationFrame(frame);
-      frame = 0;
-      field?.style.setProperty("--cursor-active", "0");
-      blobs.forEach((blob) => {
-        blob.style.setProperty("--mouse-x", "0px");
-        blob.style.setProperty("--mouse-y", "0px");
-      });
-    };
-
-    wallpaper.addEventListener("pointermove", handlePointerMove, {
-      passive: true,
-    });
-    wallpaper.addEventListener("pointerleave", resetPointer);
-
-    return () => {
-      wallpaper.removeEventListener("pointermove", handlePointerMove);
-      wallpaper.removeEventListener("pointerleave", resetPointer);
-      if (frame) window.cancelAnimationFrame(frame);
-    };
   }, []);
 
   const openApp = (id: AppId) => dispatch({ type: "open", id });
@@ -695,16 +600,8 @@ export default function DesktopShell({
         </div>
       </header>
 
-      <main className="os-wallpaper" ref={wallpaperRef}>
-        <div className="lava-field" aria-hidden="true">
-          <span className="lava-blob lava-coral" data-depth="12"></span>
-          <span className="lava-blob lava-yellow" data-depth="19"></span>
-          <span className="lava-blob lava-blue" data-depth="9"></span>
-          <span className="lava-blob lava-green" data-depth="16"></span>
-          <span className="lava-blob lava-lilac" data-depth="7"></span>
-          <span className="lava-blob lava-coral-small" data-depth="27"></span>
-          <span className="lava-blob lava-blue-small" data-depth="23"></span>
-        </div>
+      <main className="os-wallpaper">
+        <FriedEgg />
         <div className="desktop-shortcuts" aria-label="Desktop shortcuts">
           {apps
             .filter((app) => app.id !== "welcome")

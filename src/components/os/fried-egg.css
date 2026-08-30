@@ -1,0 +1,247 @@
+.fried-egg-scene {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  display: grid;
+  overflow: hidden;
+  place-items: center;
+  pointer-events: none;
+}
+
+.egg-motion {
+  --egg-rotate: 0deg;
+  --egg-x: 0px;
+  --egg-y: 0px;
+  --yolk-x: 0px;
+  --yolk-y: 0px;
+  position: relative;
+  width: min(34vw, 440px);
+  min-width: 330px;
+  transform: translate3d(var(--egg-x), var(--egg-y), 0)
+    rotate(var(--egg-rotate));
+  transition: transform 90ms ease-out;
+  pointer-events: auto;
+  will-change: transform;
+}
+
+.fried-egg-button {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  filter: drop-shadow(8px 9px 0 rgb(30 30 27 / 35%));
+  cursor: crosshair;
+  animation: egg-idle 4.8s ease-in-out infinite;
+}
+
+.fried-egg-button svg {
+  display: block;
+  width: 100%;
+  overflow: visible;
+}
+
+.egg-white {
+  fill: var(--os-cream);
+  stroke: var(--os-ink);
+  stroke-width: 6;
+  stroke-linejoin: round;
+}
+
+.egg-yolk-group {
+  transform: translate3d(var(--yolk-x), var(--yolk-y), 0);
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform 100ms ease-out;
+}
+
+.egg-yolk {
+  fill: var(--os-yellow);
+  stroke: var(--os-ink);
+  stroke-width: 6;
+  stroke-linejoin: round;
+}
+
+.egg-shine {
+  fill: rgb(255 250 240 / 65%);
+  transform: rotate(-18deg);
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.egg-motion[data-nearby="true"] .fried-egg-button {
+  animation-duration: 0.34s;
+}
+
+.egg-hint {
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  padding: 5px 9px;
+  border: 1.5px solid var(--os-ink);
+  border-radius: 999px;
+  background: var(--os-cream);
+  box-shadow: 2px 2px 0 var(--os-ink);
+  font-size: 0.62rem;
+  font-weight: 850;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  translate: -50% 0;
+  white-space: nowrap;
+}
+
+.is-burst .egg-motion {
+  animation: egg-pop 220ms cubic-bezier(0.5, -0.35, 0.7, 0.2) forwards;
+  pointer-events: none;
+}
+
+.egg-fragments {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.egg-fragment {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--piece-width);
+  height: var(--piece-height);
+  border: 2px solid var(--os-ink);
+  opacity: 0;
+  animation: egg-piece-fly 1.05s cubic-bezier(0.16, 0.74, 0.28, 1.15)
+    var(--piece-delay) forwards;
+}
+
+.fragment-white {
+  border-radius: 63% 37% 58% 42% / 44% 62% 38% 56%;
+  background: var(--os-cream);
+}
+
+.fragment-yolk {
+  border-radius: 55% 45% 69% 31% / 39% 57% 43% 61%;
+  background: var(--os-yellow);
+}
+
+.egg-fragment:nth-child(3n) {
+  clip-path: polygon(7% 14%, 93% 0, 82% 89%, 19% 100%);
+}
+
+.egg-fragment:nth-child(4n) {
+  clip-path: polygon(19% 0, 100% 29%, 74% 100%, 0 76%);
+}
+
+.egg-reset {
+  position: absolute;
+  bottom: 108px;
+  left: 50%;
+  z-index: 3;
+  padding: 9px 13px;
+  border: 2px solid var(--os-ink);
+  border-radius: 6px;
+  background: var(--os-yellow);
+  box-shadow: 3px 3px 0 var(--os-ink);
+  color: var(--os-ink);
+  font-size: 0.72rem;
+  font-weight: 850;
+  cursor: pointer;
+  opacity: 0;
+  animation: egg-reset-in 260ms ease 800ms forwards;
+  pointer-events: auto;
+  translate: -50% 0;
+}
+
+@keyframes egg-idle {
+  0%,
+  100% {
+    transform: rotate(-1deg) scale(1, 1);
+  }
+  35% {
+    transform: rotate(1.4deg) scale(1.015, 0.985);
+  }
+  65% {
+    transform: rotate(-0.7deg) scale(0.99, 1.018);
+  }
+}
+
+@keyframes egg-pop {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  35% {
+    opacity: 1;
+    transform: scale(1.12, 0.88);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.15, 1.45);
+  }
+}
+
+@keyframes egg-piece-fly {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(0deg) scale(0.2);
+  }
+  12% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: translate(
+        calc(-50% + var(--piece-x)),
+        calc(-50% + var(--piece-y))
+      )
+      rotate(var(--piece-rotation)) scale(1);
+  }
+}
+
+@keyframes egg-reset-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 859px) {
+  .fried-egg-scene {
+    position: fixed;
+    opacity: 0.26;
+  }
+
+  .egg-motion {
+    width: 68vw;
+    min-width: 260px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fried-egg-button,
+  .egg-motion,
+  .egg-fragment,
+  .egg-reset {
+    animation: none;
+  }
+
+  .egg-fragment {
+    opacity: 1;
+    transform: translate(
+        calc(-50% + var(--piece-x)),
+        calc(-50% + var(--piece-y))
+      )
+      rotate(var(--piece-rotation));
+  }
+
+  .is-burst .egg-motion {
+    opacity: 0;
+  }
+
+  .egg-reset {
+    opacity: 1;
+  }
+}
