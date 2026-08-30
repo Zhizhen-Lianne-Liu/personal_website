@@ -223,7 +223,6 @@ export default function FriedEgg() {
       motion.style.setProperty("--egg-rotate", "0deg");
       motion.style.setProperty("--yolk-x", "0px");
       motion.style.setProperty("--yolk-y", "0px");
-      motion.dataset.nearby = "false";
     };
 
     const update = () => {
@@ -251,10 +250,18 @@ export default function FriedEgg() {
       );
       motion.style.setProperty("--yolk-x", `${directionX * proximity * 17}px`);
       motion.style.setProperty("--yolk-y", `${directionY * proximity * 12}px`);
-      motion.dataset.nearby = proximity > 0.32 ? "true" : "false";
     };
 
     const handlePointerMove = (event: PointerEvent) => {
+      const target = event.target;
+      const hoveringEggShape =
+        target instanceof Element &&
+        target.closest(".egg-white, .egg-yolk, .egg-shine");
+      if (!hoveringEggShape) {
+        reset();
+        return;
+      }
+
       pointerX = event.clientX;
       pointerY = event.clientY;
       if (!frame) frame = window.requestAnimationFrame(update);
@@ -277,7 +284,7 @@ export default function FriedEgg() {
       ref={sceneRef}
       className={`fried-egg-scene ${burst ? "is-burst" : ""}`}
     >
-      <div ref={motionRef} className="egg-motion" data-nearby="false">
+      <div ref={motionRef} className="egg-motion" data-hovered="false">
         <button
           className="fried-egg-button"
           type="button"
@@ -288,6 +295,19 @@ export default function FriedEgg() {
               target.closest(".egg-white, .egg-yolk, .egg-shine");
 
             if (event.detail === 0 || clickedEggShape) setBurst(true);
+          }}
+          onPointerMove={(event) => {
+            const target = event.target;
+            const hoveringEggShape =
+              target instanceof Element &&
+              target.closest(".egg-white, .egg-yolk, .egg-shine");
+            if (motionRef.current)
+              motionRef.current.dataset.hovered = hoveringEggShape
+                ? "true"
+                : "false";
+          }}
+          onPointerLeave={() => {
+            if (motionRef.current) motionRef.current.dataset.hovered = "false";
           }}
           disabled={burst}
           aria-label="Burst the fried egg"

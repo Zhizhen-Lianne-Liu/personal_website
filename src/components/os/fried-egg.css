@@ -32,7 +32,6 @@
   background: transparent;
   filter: drop-shadow(8px 9px 0 rgb(30 30 27 / 35%));
   cursor: default;
-  animation: egg-idle 4.8s ease-in-out infinite;
 }
 
 .fried-egg-button svg {
@@ -72,8 +71,8 @@
   cursor: crosshair;
 }
 
-.egg-motion[data-nearby="true"] .fried-egg-button {
-  animation-duration: 0.34s;
+.egg-motion[data-hovered="true"] .fried-egg-button {
+  animation: egg-idle 0.4s ease-in-out infinite;
 }
 
 .is-burst .egg-motion {
