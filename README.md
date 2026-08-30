@@ -2,6 +2,8 @@
 
 A lightweight personal website built with Astro, TypeScript, custom CSS, and Markdown. It is designed to build to static files for deployment on [SRCF](https://docs.srcf.net/reference/web-hosting/regular-hosting/).
 
+The `feat/srcf-site-os` branch explores a desktop-style interface. Its interaction model, component boundary, dependencies, and deliberate non-dependencies are defined in [docs/os-design-architecture.md](docs/os-design-architecture.md).
+
 ## Local development
 
 Requirements: Node.js 22 or newer and npm 10 or newer.

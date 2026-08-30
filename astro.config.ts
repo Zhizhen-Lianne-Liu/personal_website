@@ -1,4 +1,5 @@
 import mdx from "@astrojs/mdx";
+import react from "@astrojs/react";
 import sitemap from "@astrojs/sitemap";
 import { defineConfig } from "astro/config";
 
@@ -8,7 +9,7 @@ export default defineConfig({
   site: "https://lianneliu.user.srcf.net",
   base,
   output: "static",
-  integrations: [mdx(), sitemap()],
+  integrations: [mdx(), react(), sitemap()],
   markdown: {
     shikiConfig: { theme: "github-dark-default" },
   },

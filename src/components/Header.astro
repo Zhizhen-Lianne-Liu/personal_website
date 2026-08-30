@@ -21,12 +21,17 @@ const isCurrent = (href: string) => currentPath.startsWith(sitePath(href));
     <nav class="desktop-nav" aria-label="Primary navigation">
       {
         navigation.map((item) => (
-          <a href={sitePath(item.href)} aria-current={isCurrent(item.href) ? "page" : undefined}>
+          <a
+            href={sitePath(item.href)}
+            aria-current={isCurrent(item.href) ? "page" : undefined}
+          >
             {item.label}
           </a>
         ))
       }
-      <a class="nav-contact" href={sitePath("/contact/")}>Let&rsquo;s talk <span aria-hidden="true">↗</span></a>
+      <a class="nav-contact" href={sitePath("/contact/")}
+        >Let&rsquo;s talk <span aria-hidden="true">↗</span></a
+      >
     </nav>
 
     <details class="mobile-menu">
@@ -34,7 +39,10 @@ const isCurrent = (href: string) => currentPath.startsWith(sitePath(href));
       <nav aria-label="Mobile navigation">
         {
           navigation.map((item) => (
-            <a href={sitePath(item.href)} aria-current={isCurrent(item.href) ? "page" : undefined}>
+            <a
+              href={sitePath(item.href)}
+              aria-current={isCurrent(item.href) ? "page" : undefined}
+            >
               {item.label}
             </a>
           ))

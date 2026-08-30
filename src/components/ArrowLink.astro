@@ -8,6 +8,11 @@ interface Props {
 const { href, label, external = false } = Astro.props;
 ---
 
-<a class="arrow-link" href={href} target={external ? "_blank" : undefined} rel={external ? "noreferrer" : undefined}>
+<a
+  class="arrow-link"
+  href={href}
+  target={external ? "_blank" : undefined}
+  rel={external ? "noreferrer" : undefined}
+>
   <span>{label}</span><span aria-hidden="true">↗</span>
 </a>
