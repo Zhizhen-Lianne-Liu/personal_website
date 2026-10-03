@@ -1,0 +1,28 @@
+---
+import PageLayout from "@/layouts/PageLayout.astro";
+import { sitePath } from "@/lib/urls";
+---
+
+<PageLayout
+  title="Page not found"
+  eyebrow="Error 404"
+  description="This window points somewhere that does not exist."
+>
+  <a class="home-link" href={sitePath()}
+    >Return to the desktop <span aria-hidden="true">→</span></a
+  >
+</PageLayout>
+
+<style>
+  .home-link {
+    display: inline-flex;
+    gap: 30px;
+    padding: 14px 18px;
+    border: var(--line);
+    border-radius: 7px;
+    background: var(--coral);
+    box-shadow: var(--shadow);
+    font-weight: 850;
+    text-decoration: none;
+  }
+</style>

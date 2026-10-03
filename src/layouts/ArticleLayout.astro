@@ -1,0 +1,56 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { sitePath } from "@/lib/urls";
+
+interface Props {
+  title: string;
+  description: string;
+  publishedAt: Date;
+  updatedAt?: Date;
+  tags?: string[];
+}
+
+const { title, description, publishedAt, updatedAt, tags = [] } = Astro.props;
+const formatDate = (date: Date) =>
+  new Intl.DateTimeFormat("en-GB", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(date);
+---
+
+<BaseLayout title={title} description={description} article>
+  <article class="article-shell">
+    <header class="article-header shell-narrow">
+      <a class="eyebrow back-link" href={sitePath("/writing/")}
+        ><span aria-hidden="true">←</span> All writing</a
+      >
+      <h1>{title}</h1>
+      <p class="article-dek">{description}</p>
+      <div class="article-meta">
+        <time datetime={publishedAt.toISOString()}
+          >Published {formatDate(publishedAt)}</time
+        >
+        {
+          updatedAt && (
+            <time datetime={updatedAt.toISOString()}>
+              Updated {formatDate(updatedAt)}
+            </time>
+          )
+        }
+      </div>
+      {
+        tags.length > 0 && (
+          <ul class="tag-list" aria-label="Topics">
+            {tags.map((tag) => (
+              <li>{tag}</li>
+            ))}
+          </ul>
+        )
+      }
+    </header>
+    <div class="prose shell-narrow">
+      <slot />
+    </div>
+  </article>
+</BaseLayout>

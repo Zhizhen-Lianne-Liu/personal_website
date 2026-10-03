@@ -1,0 +1,28 @@
+---
+import { sitePath } from "@/lib/urls";
+
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="shell footer-grid">
+    <div>
+      <p class="footer-title">Thanks for stopping by.</p>
+      <p class="footer-note">
+        Designed with care, built with Astro, and served as plain HTML.
+      </p>
+    </div>
+    <nav aria-label="Footer navigation">
+      <a href={sitePath("/work/")}>Work</a>
+      <a href={sitePath("/writing/")}>Writing</a>
+      <a href={sitePath("/about/")}>About</a>
+      <a href={sitePath("/rss.xml")}>RSS</a>
+    </nav>
+    <div class="footer-meta">
+      <a href="https://github.com/Zhizhen-Lianne-Liu" rel="me"
+        >GitHub <span aria-hidden="true">↗</span></a
+      >
+      <p>© {year} Lianne Liu</p>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,73 @@
+---
+import PageLayout from "@/layouts/PageLayout.astro";
+import { sitePath } from "@/lib/urls";
+---
+
+<PageLayout
+  title="Welcome"
+  eyebrow="Start here"
+  description="A straightforward introduction outside the desktop interface."
+>
+  <div class="welcome-grid">
+    <div>
+      <h2>Hello, I&rsquo;m Lianne.</h2>
+      <p>
+        This is my corner of the web for selected work, considered writing, and
+        the ideas I am still figuring out.
+      </p>
+    </div>
+    <nav aria-label="Explore the site">
+      <a href={sitePath("/work/")}
+        >Selected work <span aria-hidden="true">→</span></a
+      >
+      <a href={sitePath("/writing/")}
+        >Writing <span aria-hidden="true">→</span></a
+      >
+      <a href={sitePath("/about/")}
+        >About me <span aria-hidden="true">→</span></a
+      >
+      <a href={sitePath("/contact/")}
+        >Contact <span aria-hidden="true">→</span></a
+      >
+    </nav>
+  </div>
+</PageLayout>
+
+<style>
+  .welcome-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(40px, 10vw, 130px);
+    align-items: start;
+  }
+  h2 {
+    margin-bottom: 22px;
+  }
+  p {
+    max-width: 620px;
+    color: var(--muted);
+    font-size: 1.1rem;
+  }
+  nav {
+    display: grid;
+    border-top: var(--line);
+  }
+  nav a {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 16px 8px;
+    border-bottom: var(--line);
+    font-weight: 800;
+    text-decoration: none;
+  }
+  nav a:hover {
+    background: var(--yellow);
+    padding-inline: 14px;
+  }
+  @media (max-width: 700px) {
+    .welcome-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
