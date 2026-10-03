@@ -6,7 +6,7 @@ import { defineConfig } from "astro/config";
 const base = process.env.ASTRO_BASE ?? "/";
 
 export default defineConfig({
-  site: "https://lianneliu.user.srcf.net",
+  site: "https://zl473.user.srcf.net",
   base,
   output: "static",
   integrations: [mdx(), react(), sitemap()],
