@@ -40,7 +40,7 @@ function randomBetween(min: number, max: number) {
   return min + Math.random() * (max - min);
 }
 
-function createBurstFragments(): FragmentSpec[] {
+function createBurstFragments(impactDistance: number): FragmentSpec[] {
   const shuffledTemplates = [...fragmentTemplates];
 
   for (let index = shuffledTemplates.length - 1; index > 0; index -= 1) {
@@ -53,6 +53,7 @@ function createBurstFragments(): FragmentSpec[] {
 
   const angleOffset = randomBetween(0, Math.PI * 2);
   const angleStep = (Math.PI * 2) / shuffledTemplates.length;
+  const scatterScale = 0.72 + impactDistance * 0.72;
 
   return shuffledTemplates.map((fragment, index) => {
     const angle = angleOffset + index * angleStep + randomBetween(-0.18, 0.18);
@@ -63,12 +64,21 @@ function createBurstFragments(): FragmentSpec[] {
 
     return {
       ...fragment,
-      x: Math.cos(angle) * distance,
-      y: Math.sin(angle) * distance * 0.78,
+      x: Math.cos(angle) * distance * scatterScale,
+      y: Math.sin(angle) * distance * 0.78 * scatterScale,
       rotation: randomBetween(-170, 170),
       delay: randomBetween(0, 0.11),
     };
   });
+}
+
+function getImpactDistance(clientX: number, clientY: number, eggRect: DOMRect) {
+  const radiusX = Math.max(1, eggRect.width / 2);
+  const radiusY = Math.max(1, eggRect.height / 2);
+  const normalizedX = (clientX - (eggRect.left + radiusX)) / radiusX;
+  const normalizedY = (clientY - (eggRect.top + radiusY)) / radiusY;
+
+  return Math.min(1, Math.hypot(normalizedX, normalizedY));
 }
 
 function fragmentStyle(fragment: FragmentSpec): FragmentStyle {
@@ -178,8 +188,17 @@ export default function FriedEgg() {
               target instanceof Element &&
               target.closest(".egg-white, .egg-yolk, .egg-shine");
 
-            if (event.detail === 0 || clickedEggShape)
-              setBurstFragments(createBurstFragments());
+            if (event.detail === 0 || clickedEggShape) {
+              const impactDistance =
+                event.detail === 0 || !motionRef.current
+                  ? 0
+                  : getImpactDistance(
+                      event.clientX,
+                      event.clientY,
+                      motionRef.current.getBoundingClientRect(),
+                    );
+              setBurstFragments(createBurstFragments(impactDistance));
+            }
           }}
           onPointerMove={(event) => {
             const target = event.target;
