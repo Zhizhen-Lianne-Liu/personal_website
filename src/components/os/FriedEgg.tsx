@@ -27,6 +27,8 @@ interface FragmentDrag {
   startRotation: number;
 }
 
+type EggPhase = "ready" | "burst" | "reforming";
+
 type FragmentTemplate = Pick<FragmentSpec, "kind" | "width" | "height">;
 type FragmentStyle = CSSProperties & Record<`--${string}`, string>;
 
@@ -105,15 +107,17 @@ function fragmentStyle(fragment: FragmentSpec): FragmentStyle {
     "--piece-width": `${fragment.width}px`,
     "--piece-height": `${fragment.height}px`,
     "--piece-delay": `${fragment.delay}s`,
+    "--piece-return-delay": `${fragment.delay * 0.5}s`,
   };
 }
 
 export default function FriedEgg() {
   const [burstFragments, setBurstFragments] = useState<FragmentSpec[]>([]);
-  const burst = burstFragments.length > 0;
+  const [phase, setPhase] = useState<EggPhase>("ready");
   const sceneRef = useRef<HTMLDivElement>(null);
   const motionRef = useRef<HTMLDivElement>(null);
   const fragmentDragRef = useRef<FragmentDrag | null>(null);
+  const reformTimerRef = useRef(0);
 
   const startFragmentDrag = (
     event: ReactPointerEvent<HTMLSpanElement>,
@@ -169,7 +173,7 @@ export default function FriedEgg() {
   useEffect(() => {
     const scene = sceneRef.current;
     const motion = motionRef.current;
-    if (!scene || !motion || burst) return;
+    if (!scene || !motion || phase !== "ready") return;
 
     const precisePointer = window.matchMedia("(pointer: fine)");
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -238,14 +242,36 @@ export default function FriedEgg() {
       window.removeEventListener("pointermove", handlePointerMove);
       window.removeEventListener("blur", reset);
       if (frame) window.cancelAnimationFrame(frame);
+      reset();
     };
-  }, [burst]);
+  }, [phase]);
+
+  useEffect(
+    () => () => {
+      window.clearTimeout(reformTimerRef.current);
+    },
+    [],
+  );
+
+  const reformEgg = () => {
+    fragmentDragRef.current = null;
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setBurstFragments([]);
+      setPhase("ready");
+      return;
+    }
+
+    setPhase("reforming");
+    window.clearTimeout(reformTimerRef.current);
+    reformTimerRef.current = window.setTimeout(() => {
+      setBurstFragments([]);
+      setPhase("ready");
+    }, 840);
+  };
 
   return (
-    <div
-      ref={sceneRef}
-      className={`fried-egg-scene ${burst ? "is-burst" : ""}`}
-    >
+    <div ref={sceneRef} className={`fried-egg-scene is-${phase}`}>
       <div ref={motionRef} className="egg-motion" data-hovered="false">
         <button
           className="fried-egg-button"
@@ -266,6 +292,7 @@ export default function FriedEgg() {
                       motionRef.current.getBoundingClientRect(),
                     );
               setBurstFragments(createBurstFragments(impactDistance));
+              setPhase("burst");
             }
           }}
           onPointerMove={(event) => {
@@ -281,7 +308,7 @@ export default function FriedEgg() {
           onPointerLeave={() => {
             if (motionRef.current) motionRef.current.dataset.hovered = "false";
           }}
-          disabled={burst}
+          disabled={phase !== "ready"}
           aria-label="Burst the fried egg"
         >
           <svg viewBox="0 0 430 310" role="img" aria-label="A jiggly fried egg">
@@ -306,7 +333,7 @@ export default function FriedEgg() {
         </button>
       </div>
 
-      {burst && (
+      {burstFragments.length > 0 && (
         <div className="egg-fragments" aria-hidden="true">
           {burstFragments.map((fragment, index) => (
             <span
@@ -322,20 +349,17 @@ export default function FriedEgg() {
         </div>
       )}
 
-      {burst && (
-        <button
-          className="egg-reset"
-          type="button"
-          onClick={() => {
-            fragmentDragRef.current = null;
-            setBurstFragments([]);
-          }}
-        >
+      {phase === "burst" && (
+        <button className="egg-reset" type="button" onClick={reformEgg}>
           Fry another egg
         </button>
       )}
       <span className="sr-only" aria-live="polite">
-        {burst ? "The fried egg burst into pieces." : "The fried egg is ready."}
+        {phase === "burst"
+          ? "The fried egg burst into pieces."
+          : phase === "reforming"
+            ? "The egg pieces are melding back together."
+            : "The fried egg is ready."}
       </span>
     </div>
   );
