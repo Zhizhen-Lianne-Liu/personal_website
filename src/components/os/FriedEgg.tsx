@@ -11,187 +11,70 @@ interface FragmentSpec {
   delay: number;
 }
 
+type FragmentTemplate = Pick<FragmentSpec, "kind" | "width" | "height">;
 type FragmentStyle = CSSProperties & Record<`--${string}`, string>;
 
-const fragments: FragmentSpec[] = [
-  {
-    kind: "white",
-    x: -238,
-    y: -132,
-    rotation: -48,
-    width: 74,
-    height: 46,
-    delay: 0,
-  },
-  {
-    kind: "white",
-    x: -188,
-    y: 74,
-    rotation: 31,
-    width: 86,
-    height: 55,
-    delay: 0.03,
-  },
-  {
-    kind: "white",
-    x: -112,
-    y: -181,
-    rotation: -18,
-    width: 65,
-    height: 79,
-    delay: 0.06,
-  },
-  {
-    kind: "white",
-    x: -54,
-    y: 149,
-    rotation: 74,
-    width: 91,
-    height: 50,
-    delay: 0.02,
-  },
-  {
-    kind: "white",
-    x: 42,
-    y: -196,
-    rotation: 22,
-    width: 78,
-    height: 53,
-    delay: 0.05,
-  },
-  {
-    kind: "white",
-    x: 112,
-    y: 143,
-    rotation: -37,
-    width: 69,
-    height: 84,
-    delay: 0.08,
-  },
-  {
-    kind: "white",
-    x: 184,
-    y: -111,
-    rotation: 56,
-    width: 95,
-    height: 48,
-    delay: 0.02,
-  },
-  {
-    kind: "white",
-    x: 241,
-    y: 44,
-    rotation: 19,
-    width: 70,
-    height: 62,
-    delay: 0.07,
-  },
-  {
-    kind: "white",
-    x: -257,
-    y: 12,
-    rotation: -9,
-    width: 62,
-    height: 70,
-    delay: 0.09,
-  },
-  {
-    kind: "white",
-    x: 208,
-    y: 126,
-    rotation: 101,
-    width: 77,
-    height: 43,
-    delay: 0.04,
-  },
-  {
-    kind: "white",
-    x: -145,
-    y: 154,
-    rotation: -81,
-    width: 58,
-    height: 71,
-    delay: 0.1,
-  },
-  {
-    kind: "white",
-    x: 132,
-    y: -174,
-    rotation: 42,
-    width: 57,
-    height: 75,
-    delay: 0.08,
-  },
-  {
-    kind: "yolk",
-    x: -130,
-    y: -83,
-    rotation: -28,
-    width: 48,
-    height: 40,
-    delay: 0.02,
-  },
-  {
-    kind: "yolk",
-    x: -82,
-    y: 91,
-    rotation: 49,
-    width: 54,
-    height: 36,
-    delay: 0.07,
-  },
-  {
-    kind: "yolk",
-    x: -23,
-    y: -122,
-    rotation: 11,
-    width: 44,
-    height: 52,
-    delay: 0.04,
-  },
-  {
-    kind: "yolk",
-    x: 51,
-    y: 109,
-    rotation: -61,
-    width: 58,
-    height: 38,
-    delay: 0,
-  },
-  {
-    kind: "yolk",
-    x: 109,
-    y: -74,
-    rotation: 37,
-    width: 43,
-    height: 47,
-    delay: 0.09,
-  },
-  {
-    kind: "yolk",
-    x: 149,
-    y: 42,
-    rotation: 83,
-    width: 50,
-    height: 34,
-    delay: 0.05,
-  },
-  {
-    kind: "yolk",
-    x: 15,
-    y: 162,
-    rotation: 18,
-    width: 39,
-    height: 45,
-    delay: 0.1,
-  },
+const fragmentTemplates: FragmentTemplate[] = [
+  { kind: "white", width: 74, height: 46 },
+  { kind: "white", width: 86, height: 55 },
+  { kind: "white", width: 65, height: 79 },
+  { kind: "white", width: 91, height: 50 },
+  { kind: "white", width: 78, height: 53 },
+  { kind: "white", width: 69, height: 84 },
+  { kind: "white", width: 95, height: 48 },
+  { kind: "white", width: 70, height: 62 },
+  { kind: "white", width: 62, height: 70 },
+  { kind: "white", width: 77, height: 43 },
+  { kind: "white", width: 58, height: 71 },
+  { kind: "white", width: 57, height: 75 },
+  { kind: "yolk", width: 48, height: 40 },
+  { kind: "yolk", width: 54, height: 36 },
+  { kind: "yolk", width: 44, height: 52 },
+  { kind: "yolk", width: 58, height: 38 },
+  { kind: "yolk", width: 43, height: 47 },
+  { kind: "yolk", width: 50, height: 34 },
+  { kind: "yolk", width: 39, height: 45 },
 ];
 
+function randomBetween(min: number, max: number) {
+  return min + Math.random() * (max - min);
+}
+
+function createBurstFragments(): FragmentSpec[] {
+  const shuffledTemplates = [...fragmentTemplates];
+
+  for (let index = shuffledTemplates.length - 1; index > 0; index -= 1) {
+    const swapIndex = Math.floor(Math.random() * (index + 1));
+    [shuffledTemplates[index], shuffledTemplates[swapIndex]] = [
+      shuffledTemplates[swapIndex],
+      shuffledTemplates[index],
+    ];
+  }
+
+  const angleOffset = randomBetween(0, Math.PI * 2);
+  const angleStep = (Math.PI * 2) / shuffledTemplates.length;
+
+  return shuffledTemplates.map((fragment, index) => {
+    const angle = angleOffset + index * angleStep + randomBetween(-0.18, 0.18);
+    const distance =
+      fragment.kind === "white"
+        ? randomBetween(285, 430)
+        : randomBetween(205, 345);
+
+    return {
+      ...fragment,
+      x: Math.cos(angle) * distance,
+      y: Math.sin(angle) * distance * 0.78,
+      rotation: randomBetween(-170, 170),
+      delay: randomBetween(0, 0.11),
+    };
+  });
+}
+
 function fragmentStyle(fragment: FragmentSpec): FragmentStyle {
-  const scatterMultiplier = 1.55;
   return {
-    "--piece-x": `${fragment.x * scatterMultiplier}px`,
-    "--piece-y": `${fragment.y * scatterMultiplier}px`,
+    "--piece-x": `${fragment.x}px`,
+    "--piece-y": `${fragment.y}px`,
     "--piece-rotation": `${fragment.rotation}deg`,
     "--piece-width": `${fragment.width}px`,
     "--piece-height": `${fragment.height}px`,
@@ -200,7 +83,8 @@ function fragmentStyle(fragment: FragmentSpec): FragmentStyle {
 }
 
 export default function FriedEgg() {
-  const [burst, setBurst] = useState(false);
+  const [burstFragments, setBurstFragments] = useState<FragmentSpec[]>([]);
+  const burst = burstFragments.length > 0;
   const sceneRef = useRef<HTMLDivElement>(null);
   const motionRef = useRef<HTMLDivElement>(null);
 
@@ -294,7 +178,8 @@ export default function FriedEgg() {
               target instanceof Element &&
               target.closest(".egg-white, .egg-yolk, .egg-shine");
 
-            if (event.detail === 0 || clickedEggShape) setBurst(true);
+            if (event.detail === 0 || clickedEggShape)
+              setBurstFragments(createBurstFragments());
           }}
           onPointerMove={(event) => {
             const target = event.target;
@@ -336,7 +221,7 @@ export default function FriedEgg() {
 
       {burst && (
         <div className="egg-fragments" aria-hidden="true">
-          {fragments.map((fragment, index) => (
+          {burstFragments.map((fragment, index) => (
             <span
               key={`${fragment.kind}-${index}`}
               className={`egg-fragment fragment-${fragment.kind}`}
@@ -350,7 +235,7 @@ export default function FriedEgg() {
         <button
           className="egg-reset"
           type="button"
-          onClick={() => setBurst(false)}
+          onClick={() => setBurstFragments([])}
         >
           Fry another egg
         </button>
