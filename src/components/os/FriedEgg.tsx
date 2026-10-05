@@ -1,4 +1,10 @@
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type PointerEvent as ReactPointerEvent,
+} from "react";
 import "./fried-egg.css";
 
 interface FragmentSpec {
@@ -9,6 +15,16 @@ interface FragmentSpec {
   width: number;
   height: number;
   delay: number;
+}
+
+interface FragmentDrag {
+  index: number;
+  pointerId: number;
+  startClientX: number;
+  startClientY: number;
+  startPieceX: number;
+  startPieceY: number;
+  startRotation: number;
 }
 
 type FragmentTemplate = Pick<FragmentSpec, "kind" | "width" | "height">;
@@ -97,6 +113,58 @@ export default function FriedEgg() {
   const burst = burstFragments.length > 0;
   const sceneRef = useRef<HTMLDivElement>(null);
   const motionRef = useRef<HTMLDivElement>(null);
+  const fragmentDragRef = useRef<FragmentDrag | null>(null);
+
+  const startFragmentDrag = (
+    event: ReactPointerEvent<HTMLSpanElement>,
+    index: number,
+  ) => {
+    const fragment = burstFragments[index];
+    if (!fragment) return;
+
+    event.preventDefault();
+    event.currentTarget.setPointerCapture(event.pointerId);
+    event.currentTarget.dataset.dragging = "true";
+    fragmentDragRef.current = {
+      index,
+      pointerId: event.pointerId,
+      startClientX: event.clientX,
+      startClientY: event.clientY,
+      startPieceX: fragment.x,
+      startPieceY: fragment.y,
+      startRotation: fragment.rotation,
+    };
+  };
+
+  const moveFragment = (event: ReactPointerEvent<HTMLSpanElement>) => {
+    const drag = fragmentDragRef.current;
+    if (!drag || drag.pointerId !== event.pointerId) return;
+
+    const deltaX = event.clientX - drag.startClientX;
+    const deltaY = event.clientY - drag.startClientY;
+    setBurstFragments((currentFragments) =>
+      currentFragments.map((fragment, index) =>
+        index === drag.index
+          ? {
+              ...fragment,
+              x: drag.startPieceX + deltaX,
+              y: drag.startPieceY + deltaY,
+              rotation: drag.startRotation + deltaX * 0.18,
+            }
+          : fragment,
+      ),
+    );
+  };
+
+  const endFragmentDrag = (event: ReactPointerEvent<HTMLSpanElement>) => {
+    const drag = fragmentDragRef.current;
+    if (!drag || drag.pointerId !== event.pointerId) return;
+
+    fragmentDragRef.current = null;
+    delete event.currentTarget.dataset.dragging;
+    if (event.currentTarget.hasPointerCapture(event.pointerId))
+      event.currentTarget.releasePointerCapture(event.pointerId);
+  };
 
   useEffect(() => {
     const scene = sceneRef.current;
@@ -245,6 +313,10 @@ export default function FriedEgg() {
               key={`${fragment.kind}-${index}`}
               className={`egg-fragment fragment-${fragment.kind}`}
               style={fragmentStyle(fragment)}
+              onPointerDown={(event) => startFragmentDrag(event, index)}
+              onPointerMove={moveFragment}
+              onPointerUp={endFragmentDrag}
+              onPointerCancel={endFragmentDrag}
             ></span>
           ))}
         </div>
@@ -254,7 +326,10 @@ export default function FriedEgg() {
         <button
           className="egg-reset"
           type="button"
-          onClick={() => setBurstFragments([])}
+          onClick={() => {
+            fragmentDragRef.current = null;
+            setBurstFragments([]);
+          }}
         >
           Fry another egg
         </button>

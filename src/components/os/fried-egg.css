@@ -95,6 +95,10 @@
   opacity: 0;
   animation: egg-piece-fly 1.05s cubic-bezier(0.16, 0.74, 0.28, 1.15)
     var(--piece-delay) forwards;
+  cursor: grab;
+  pointer-events: auto;
+  touch-action: none;
+  user-select: none;
 }
 
 .egg-fragment::before {
@@ -102,6 +106,23 @@
   inset: 0;
   border: 2px solid var(--os-ink);
   content: "";
+  transition:
+    filter 120ms ease,
+    transform 120ms ease;
+}
+
+.egg-fragment:hover::before {
+  filter: brightness(1.04);
+  transform: scale(1.06);
+}
+
+.egg-fragment[data-dragging="true"] {
+  cursor: grabbing;
+}
+
+.egg-fragment[data-dragging="true"]::before {
+  filter: brightness(1.08);
+  transform: scale(1.1) rotate(2deg);
 }
 
 .fragment-white::before {
