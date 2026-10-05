@@ -15,6 +15,9 @@ interface FragmentSpec {
   width: number;
   height: number;
   delay: number;
+  meldX: number;
+  meldY: number;
+  meldRotation: number;
 }
 
 interface FragmentDrag {
@@ -72,6 +75,8 @@ function createBurstFragments(impactDistance: number): FragmentSpec[] {
   const angleOffset = randomBetween(0, Math.PI * 2);
   const angleStep = (Math.PI * 2) / shuffledTemplates.length;
   const scatterScale = 0.72 + impactDistance * 0.72;
+  let whiteIndex = 0;
+  let yolkIndex = 0;
 
   return shuffledTemplates.map((fragment, index) => {
     const angle = angleOffset + index * angleStep + randomBetween(-0.18, 0.18);
@@ -79,6 +84,15 @@ function createBurstFragments(impactDistance: number): FragmentSpec[] {
       fragment.kind === "white"
         ? randomBetween(285, 430)
         : randomBetween(205, 345);
+    const kindIndex = fragment.kind === "white" ? whiteIndex++ : yolkIndex++;
+    const kindCount = fragment.kind === "white" ? 12 : 7;
+    const meldAngle = (kindIndex / kindCount) * Math.PI * 2;
+    const meldRadiusX =
+      fragment.kind === "white"
+        ? randomBetween(100, 126)
+        : randomBetween(22, 34);
+    const meldRadiusY =
+      fragment.kind === "white" ? randomBetween(62, 82) : randomBetween(16, 26);
 
     return {
       ...fragment,
@@ -86,6 +100,9 @@ function createBurstFragments(impactDistance: number): FragmentSpec[] {
       y: Math.sin(angle) * distance * 0.78 * scatterScale,
       rotation: randomBetween(-170, 170),
       delay: randomBetween(0, 0.11),
+      meldX: Math.cos(meldAngle) * meldRadiusX,
+      meldY: Math.sin(meldAngle) * meldRadiusY,
+      meldRotation: randomBetween(-18, 18),
     };
   });
 }
@@ -108,6 +125,9 @@ function fragmentStyle(fragment: FragmentSpec): FragmentStyle {
     "--piece-height": `${fragment.height}px`,
     "--piece-delay": `${fragment.delay}s`,
     "--piece-return-delay": `${fragment.delay * 0.5}s`,
+    "--piece-meld-x": `${fragment.meldX}px`,
+    "--piece-meld-y": `${fragment.meldY}px`,
+    "--piece-meld-rotation": `${fragment.meldRotation}deg`,
   };
 }
 
@@ -272,6 +292,33 @@ export default function FriedEgg() {
 
   return (
     <div ref={sceneRef} className={`fried-egg-scene is-${phase}`}>
+      <svg
+        className="egg-filter-definitions"
+        width="0"
+        height="0"
+        aria-hidden="true"
+        focusable="false"
+      >
+        <defs>
+          <filter
+            id="egg-fragment-goo"
+            x="-30%"
+            y="-30%"
+            width="160%"
+            height="160%"
+            colorInterpolationFilters="sRGB"
+          >
+            <feGaussianBlur in="SourceGraphic" stdDeviation="7" result="blur" />
+            <feColorMatrix
+              in="blur"
+              mode="matrix"
+              values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7"
+              result="goo"
+            />
+            <feBlend in="SourceGraphic" in2="goo" />
+          </filter>
+        </defs>
+      </svg>
       <div ref={motionRef} className="egg-motion" data-hovered="false">
         <button
           className="fried-egg-button"
