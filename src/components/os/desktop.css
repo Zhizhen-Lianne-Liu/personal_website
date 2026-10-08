@@ -121,11 +121,7 @@ body.os-body {
   position: relative;
   height: calc(100dvh - 36px);
   overflow: hidden;
-  background:
-    linear-gradient(90deg, rgb(30 30 27 / 3%) 1px, transparent 1px) 0 0 / 24px
-      24px,
-    linear-gradient(rgb(30 30 27 / 3%) 1px, transparent 1px) 0 0 / 24px 24px,
-    var(--os-paper);
+  background: var(--os-paper);
 }
 
 .desktop-shortcuts {
@@ -260,10 +256,7 @@ body.os-body {
 .os-window-body {
   height: calc(100% - 37px);
   overflow: auto;
-  background:
-    radial-gradient(circle at 1px 1px, rgb(30 30 27 / 5%) 1px, transparent 0) 0
-      0 / 18px 18px,
-    var(--os-cream);
+  background: var(--os-cream);
 }
 
 .os-overline {
@@ -277,41 +270,6 @@ body.os-body {
   text-transform: uppercase;
 }
 
-.welcome-app {
-  display: grid;
-  min-height: 100%;
-  grid-template-columns: 1.25fr 0.75fr;
-  background: var(--os-yellow);
-}
-
-.welcome-copy {
-  z-index: 1;
-  padding: clamp(28px, 4vw, 48px);
-}
-
-.welcome-copy h1 {
-  max-width: 430px;
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(2.5rem, 4.8vw, 4.2rem);
-  line-height: 0.95;
-  letter-spacing: -0.055em;
-}
-
-.welcome-copy > p:not(.os-overline) {
-  max-width: 420px;
-  margin-top: 22px;
-  font-size: 1rem;
-  font-weight: 580;
-}
-
-.welcome-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 26px;
-}
-
-.welcome-actions button,
 .text-button {
   padding: 9px 13px;
   border: 2px solid var(--os-ink);
@@ -323,67 +281,9 @@ body.os-body {
   cursor: pointer;
 }
 
-.welcome-actions button:first-child {
-  background: var(--os-coral);
-}
-.welcome-actions button:hover,
 .text-button:hover {
   translate: 2px 2px;
   box-shadow: 1px 1px 0 var(--os-ink);
-}
-
-.welcome-art {
-  position: relative;
-  min-height: 300px;
-  overflow: hidden;
-}
-
-.sun {
-  position: absolute;
-  top: 50%;
-  left: 42%;
-  display: grid;
-  width: 150px;
-  height: 150px;
-  place-items: center;
-  border: 2px solid var(--os-ink);
-  border-radius: 50%;
-  background: var(--os-coral);
-  box-shadow: 7px 7px 0 var(--os-ink);
-  font-family: Georgia, serif;
-  font-size: 2.5rem;
-  font-weight: 800;
-  rotate: 7deg;
-  translate: -50% -50%;
-}
-
-.spark {
-  position: absolute;
-  font-size: 3.4rem;
-  -webkit-text-stroke: 1.5px var(--os-ink);
-}
-.spark-one {
-  top: 12%;
-  right: 12%;
-  color: var(--os-blue);
-  rotate: 12deg;
-}
-.spark-two {
-  bottom: 8%;
-  left: 2%;
-  color: var(--os-green);
-  rotate: -12deg;
-}
-.scribble {
-  position: absolute;
-  right: 9%;
-  bottom: 8%;
-  font-family: Georgia, serif;
-  font-size: 0.9rem;
-  font-style: italic;
-  font-weight: 800;
-  line-height: 1.05;
-  rotate: -8deg;
 }
 
 .work-app,
@@ -400,7 +300,7 @@ body.os-body {
 }
 
 .app-heading h2,
-.about-app h2,
+.about-app h1,
 .contact-app h2 {
   font-family: Georgia, "Times New Roman", serif;
   font-size: clamp(1.8rem, 3vw, 2.65rem);
@@ -419,58 +319,6 @@ body.os-body {
   text-transform: uppercase;
 }
 
-.project-preview {
-  display: grid;
-  min-height: 148px;
-  grid-template-columns: 55px 1fr;
-  margin-block: 20px 15px;
-  overflow: hidden;
-  border: 2px solid var(--os-ink);
-  border-radius: 7px;
-  background: var(--os-green);
-}
-
-.preview-sidebar {
-  display: grid;
-  align-content: start;
-  gap: 8px;
-  padding: 13px;
-  border-right: 2px solid var(--os-ink);
-  background: var(--os-blue);
-}
-
-.preview-sidebar i {
-  width: 24px;
-  height: 20px;
-  border: 1.5px solid var(--os-ink);
-  border-radius: 4px;
-  background: var(--os-cream);
-}
-.preview-canvas {
-  display: grid;
-  align-content: center;
-  gap: 8px;
-  padding: 25px;
-}
-.preview-canvas strong {
-  font-family: Georgia, serif;
-  font-size: 1.6rem;
-}
-.preview-canvas span {
-  display: block;
-  width: 74%;
-  height: 8px;
-  border: 1px solid var(--os-ink);
-  background: var(--os-cream);
-}
-.preview-canvas span:nth-of-type(2) {
-  width: 55%;
-  background: var(--os-yellow);
-}
-.preview-canvas span:nth-of-type(3) {
-  width: 34%;
-  background: var(--os-coral);
-}
 .work-app > p,
 .contact-app > p {
   margin-block: 12px 18px;
@@ -518,13 +366,7 @@ body.os-body {
   font-size: 0.72rem;
 }
 .empty-note {
-  display: flex;
-  align-items: center;
-  gap: 10px;
   margin-top: 18px;
-  padding: 14px;
-  border: 1.5px dashed var(--os-ink);
-  border-radius: 7px;
   color: #5c574c;
   font-size: 0.77rem;
 }
@@ -532,39 +374,11 @@ body.os-body {
 .about-app {
   display: grid;
   min-height: 100%;
-  grid-template-columns: 150px 1fr;
-  gap: 25px;
   align-items: center;
   padding: 28px;
   background: var(--os-blue);
 }
 
-.portrait-placeholder {
-  position: relative;
-  display: grid;
-  width: 138px;
-  height: 170px;
-  place-items: center;
-  border: 2px solid var(--os-ink);
-  border-radius: 50% 50% 9px 9px;
-  background: var(--os-coral);
-  box-shadow: 5px 5px 0 var(--os-ink);
-}
-
-.portrait-placeholder span {
-  font-family: Georgia, serif;
-  font-size: 2.5rem;
-  font-weight: 800;
-}
-.portrait-placeholder i {
-  position: absolute;
-  top: -18px;
-  right: -14px;
-  color: var(--os-yellow);
-  font-size: 2.5rem;
-  font-style: normal;
-  -webkit-text-stroke: 1px var(--os-ink);
-}
 .about-app p:not(.os-overline) {
   margin-block: 15px 20px;
   font-size: 0.87rem;
@@ -712,9 +526,6 @@ body.os-body {
   .os-window-controls .control-maximize {
     display: none;
   }
-  .welcome-app {
-    min-height: 360px;
-  }
   .os-dock {
     position: fixed;
     overflow-x: auto;
@@ -728,23 +539,6 @@ body.os-body {
   }
   .menu-right {
     gap: 6px;
-  }
-  .welcome-app {
-    grid-template-columns: 1fr;
-  }
-  .welcome-art {
-    position: absolute;
-    inset: 37px 0 0;
-    opacity: 0.22;
-  }
-  .welcome-copy {
-    position: relative;
-  }
-  .about-app {
-    grid-template-columns: 1fr;
-  }
-  .portrait-placeholder {
-    display: none;
   }
   .note-row {
     grid-template-columns: 1fr auto;

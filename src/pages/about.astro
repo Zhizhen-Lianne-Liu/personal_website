@@ -7,53 +7,20 @@ import PageLayout from "@/layouts/PageLayout.astro";
   eyebrow="A short introduction"
   description="The useful version, without inventing a grand origin story."
 >
-  <div class="about-grid">
-    <div class="about-mark" aria-hidden="true"><span>LL</span><i>✦</i></div>
-    <div class="prose-copy">
-      <h2>Hello, I&rsquo;m Lianne.</h2>
-      <p>
-        I care about making complicated things more legible, useful, and human.
-      </p>
-      <p>
-        This site is a growing record of selected work and ideas. The longer
-        biography is still under review, so this page intentionally avoids
-        carrying stale claims forward.
-      </p>
-    </div>
+  <div class="prose-copy">
+    <h2>Hello, I&rsquo;m Lianne.</h2>
+    <p>
+      I care about making complicated things more legible, useful, and human.
+    </p>
+    <p>
+      This site is a growing record of selected work and ideas. The longer
+      biography is still under review, so this page intentionally avoids
+      carrying stale claims forward.
+    </p>
   </div>
 </PageLayout>
 
 <style>
-  .about-grid {
-    display: grid;
-    grid-template-columns: 240px 1fr;
-    gap: clamp(42px, 10vw, 130px);
-    align-items: center;
-  }
-  .about-mark {
-    position: relative;
-    display: grid;
-    width: 220px;
-    height: 260px;
-    place-items: center;
-    border: var(--line);
-    border-radius: 50% 50% 12px 12px;
-    background: var(--coral);
-    box-shadow: var(--shadow);
-  }
-  .about-mark span {
-    font-family: var(--font-display);
-    font-size: 4rem;
-  }
-  .about-mark i {
-    position: absolute;
-    top: -30px;
-    right: -26px;
-    color: var(--yellow);
-    font-size: 4rem;
-    font-style: normal;
-    -webkit-text-stroke: 2px var(--ink);
-  }
   .prose-copy {
     max-width: 700px;
   }
@@ -66,14 +33,5 @@ import PageLayout from "@/layouts/PageLayout.astro";
   }
   .prose-copy p + p {
     margin-top: 18px;
-  }
-  @media (max-width: 650px) {
-    .about-grid {
-      grid-template-columns: 1fr;
-    }
-    .about-mark {
-      width: 170px;
-      height: 195px;
-    }
   }
 </style>

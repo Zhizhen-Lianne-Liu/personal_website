@@ -5,11 +5,9 @@ import {
   CircleUserRound,
   Code2,
   ExternalLink,
-  House,
   Mail,
   Maximize2,
   MousePointer2,
-  Sparkles,
   X,
   type LucideIcon,
 } from "lucide-react";
@@ -18,7 +16,7 @@ import { Rnd } from "react-rnd";
 import FriedEgg from "./FriedEgg";
 import "./desktop.css";
 
-type AppId = "welcome" | "work" | "writing" | "about" | "contact";
+type AppId = "work" | "writing" | "about" | "contact";
 
 interface AppDefinition {
   id: AppId;
@@ -55,12 +53,12 @@ type Action =
 
 const apps: AppDefinition[] = [
   {
-    id: "welcome",
-    label: "Start here",
-    subtitle: "Welcome",
-    route: "/welcome/",
-    icon: House,
-    color: "var(--os-coral)",
+    id: "about",
+    label: "About me",
+    subtitle: "A short intro",
+    route: "/about/",
+    icon: CircleUserRound,
+    color: "var(--os-green)",
   },
   {
     id: "work",
@@ -79,14 +77,6 @@ const apps: AppDefinition[] = [
     color: "var(--os-yellow)",
   },
   {
-    id: "about",
-    label: "About me",
-    subtitle: "A short intro",
-    route: "/about/",
-    icon: CircleUserRound,
-    color: "var(--os-green)",
-  },
-  {
     id: "contact",
     label: "Say hello",
     subtitle: "Contact",
@@ -97,8 +87,8 @@ const apps: AppDefinition[] = [
 ];
 
 const initialState: DesktopState = {
-  welcome: {
-    open: true,
+  about: {
+    open: false,
     maximized: false,
     z: 2,
     x: 72,
@@ -107,7 +97,7 @@ const initialState: DesktopState = {
     height: 432,
   },
   work: {
-    open: true,
+    open: false,
     maximized: false,
     z: 3,
     x: 650,
@@ -123,15 +113,6 @@ const initialState: DesktopState = {
     y: 80,
     width: 550,
     height: 430,
-  },
-  about: {
-    open: false,
-    maximized: false,
-    z: 1,
-    x: 180,
-    y: 160,
-    width: 480,
-    height: 390,
   },
   contact: {
     open: false,
@@ -151,10 +132,9 @@ function nextZ(state: DesktopState) {
 function reducer(state: DesktopState, action: Action): DesktopState {
   if (action.type === "tidy") {
     const positions: Record<AppId, [number, number]> = {
-      welcome: [52, 52],
+      about: [52, 52],
       work: [680, 92],
       writing: [260, 150],
-      about: [620, 210],
       contact: [430, 260],
     };
 
@@ -233,40 +213,6 @@ function AppContent({
   basePath: string;
   open: (id: AppId) => void;
 }) {
-  if (id === "welcome") {
-    return (
-      <div className="welcome-app">
-        <div className="welcome-copy">
-          <p className="os-overline">
-            <Sparkles size={15} /> Lianne&rsquo;s place on the internet
-          </p>
-          <h1>Ideas, work &amp; curious detours.</h1>
-          <p>
-            A playful home for the things I make, learn, and want to remember.
-          </p>
-          <div className="welcome-actions">
-            <button type="button" onClick={() => open("work")}>
-              Open my work
-            </button>
-            <button type="button" onClick={() => open("about")}>
-              About me
-            </button>
-          </div>
-        </div>
-        <div className="welcome-art" aria-hidden="true">
-          <span className="sun">LL</span>
-          <span className="spark spark-one">✦</span>
-          <span className="spark spark-two">✷</span>
-          <span className="scribble">
-            always
-            <br />
-            curious
-          </span>
-        </div>
-      </div>
-    );
-  }
-
   if (id === "work") {
     return (
       <div className="work-app">
@@ -276,19 +222,6 @@ function AppContent({
             <h2>A calmer personal website</h2>
           </div>
           <span className="status-pill">In progress</span>
-        </div>
-        <div className="project-preview" aria-hidden="true">
-          <div className="preview-sidebar">
-            <i></i>
-            <i></i>
-            <i></i>
-          </div>
-          <div className="preview-canvas">
-            <strong>Make it clear.</strong>
-            <span></span>
-            <span></span>
-            <span></span>
-          </div>
         </div>
         <p>
           Editorial content meets an original desktop interface, built as a fast
@@ -312,7 +245,6 @@ function AppContent({
             <p className="os-overline">Notebook</p>
             <h2>Writing</h2>
           </div>
-          <BookOpenText size={30} />
         </div>
         <a
           className="note-row"
@@ -325,10 +257,9 @@ function AppContent({
           </span>
           <span aria-hidden="true">↗</span>
         </a>
-        <div className="empty-note">
-          <Sparkles size={18} />
-          <span>More notes are being reviewed before they move in.</span>
-        </div>
+        <p className="empty-note">
+          More notes are being reviewed before they move in.
+        </p>
       </div>
     );
   }
@@ -336,13 +267,9 @@ function AppContent({
   if (id === "about") {
     return (
       <div className="about-app">
-        <div className="portrait-placeholder" aria-hidden="true">
-          <span>LL</span>
-          <i>✦</i>
-        </div>
         <div>
           <p className="os-overline">A short introduction</p>
-          <h2>Hello, I&rsquo;m Lianne.</h2>
+          <h1>Hello, I&rsquo;m Lianne.</h1>
           <p>
             I care about making complicated things more legible, useful, and
             human. This site is a growing record of selected work and ideas.
@@ -544,8 +471,8 @@ export default function DesktopShell({
           <button
             className="os-mark"
             type="button"
-            aria-label="Open welcome window"
-            onClick={() => openApp("welcome")}
+            aria-label="Open About me"
+            onClick={() => openApp("about")}
           >
             LL
           </button>
@@ -554,7 +481,7 @@ export default function DesktopShell({
               className="menu-item"
               onSelect={() => openApp("about")}
             >
-              About this site
+              About me
             </DropdownMenu.Item>
             <DropdownMenu.Item
               className="menu-item"
@@ -603,27 +530,22 @@ export default function DesktopShell({
       <main className="os-wallpaper">
         <FriedEgg />
         <div className="desktop-shortcuts" aria-label="Desktop shortcuts">
-          {apps
-            .filter((app) => app.id !== "welcome")
-            .map((app) => (
-              <a
-                key={app.id}
-                href={joinPath(basePath, app.route)}
-                className="desktop-shortcut"
-                onClick={(event) => {
-                  event.preventDefault();
-                  openApp(app.id);
-                }}
-              >
-                <span
-                  className="shortcut-icon"
-                  style={{ background: app.color }}
-                >
-                  <app.icon size={31} strokeWidth={1.8} />
-                </span>
-                <span>{app.label}</span>
-              </a>
-            ))}
+          {apps.map((app) => (
+            <a
+              key={app.id}
+              href={joinPath(basePath, app.route)}
+              className="desktop-shortcut"
+              onClick={(event) => {
+                event.preventDefault();
+                openApp(app.id);
+              }}
+            >
+              <span className="shortcut-icon" style={{ background: app.color }}>
+                <app.icon size={31} strokeWidth={1.8} />
+              </span>
+              <span>{app.label}</span>
+            </a>
+          ))}
         </div>
 
         <div className="window-layer">
