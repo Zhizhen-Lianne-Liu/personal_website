@@ -1,4 +1,5 @@
 ---
+import { sitePath } from "@/lib/urls";
 import PageLayout from "@/layouts/PageLayout.astro";
 ---
 
@@ -8,7 +9,10 @@ import PageLayout from "@/layouts/PageLayout.astro";
   description="The useful version, without inventing a grand origin story."
 >
   <div class="about-grid">
-    <div class="about-mark" aria-hidden="true"><span>LL</span><i>✦</i></div>
+    <div class="about-mark" aria-hidden="true">
+      <img src={sitePath("/pigeon.svg")} alt="" width="170" height="170" />
+      <i>✦</i>
+    </div>
     <div class="prose-copy">
       <h2>Hello, I&rsquo;m Lianne.</h2>
       <p>
@@ -41,9 +45,9 @@ import PageLayout from "@/layouts/PageLayout.astro";
     background: var(--coral);
     box-shadow: var(--shadow);
   }
-  .about-mark span {
-    font-family: var(--font-display);
-    font-size: 4rem;
+  .about-mark img {
+    width: 78%;
+    height: auto;
   }
   .about-mark i {
     position: absolute;

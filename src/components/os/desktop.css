@@ -65,16 +65,14 @@ body.os-body {
 
 .os-mark {
   display: grid;
-  width: 25px;
-  height: 25px;
+  width: 30px;
+  height: 30px;
+  padding: 0;
   margin-right: 5px;
   place-items: center;
-  border: 1.5px solid var(--os-ink);
-  border-radius: 50%;
-  background: var(--os-coral);
-  color: var(--os-ink);
-  font-size: 0.58rem;
-  font-weight: 900;
+  border: 0;
+  background: transparent;
+  border-radius: 5px;
   cursor: pointer;
 }
 
@@ -338,22 +336,14 @@ body.os-body {
   overflow: hidden;
 }
 
-.sun {
+.welcome-pigeon {
   position: absolute;
   top: 50%;
   left: 42%;
-  display: grid;
-  width: 150px;
-  height: 150px;
-  place-items: center;
-  border: 2px solid var(--os-ink);
-  border-radius: 50%;
-  background: var(--os-coral);
-  box-shadow: 7px 7px 0 var(--os-ink);
-  font-family: Georgia, serif;
-  font-size: 2.5rem;
-  font-weight: 800;
-  rotate: 7deg;
+  width: 170px;
+  height: 170px;
+  filter: drop-shadow(3px 4px 0 rgb(30 30 27 / 22%));
+  rotate: -3deg;
   translate: -50% -50%;
 }
 
@@ -551,10 +541,9 @@ body.os-body {
   box-shadow: 5px 5px 0 var(--os-ink);
 }
 
-.portrait-placeholder span {
-  font-family: Georgia, serif;
-  font-size: 2.5rem;
-  font-weight: 800;
+.portrait-placeholder img {
+  width: 112px;
+  height: 112px;
 }
 .portrait-placeholder i {
   position: absolute;

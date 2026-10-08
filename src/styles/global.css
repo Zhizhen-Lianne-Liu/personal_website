@@ -166,20 +166,13 @@
     letter-spacing: -0.025em;
   }
 
-  .wordmark > span:first-child {
-    display: grid;
+  .wordmark > img {
     width: 40px;
     height: 40px;
-    place-items: center;
-    border: var(--line);
-    border-radius: 50%;
-    background: var(--coral);
-    font-size: 0.78rem;
-    letter-spacing: 0;
     transition: transform 180ms ease;
   }
 
-  .wordmark:hover > span:first-child {
+  .wordmark:hover > img {
     transform: rotate(-8deg);
   }
 

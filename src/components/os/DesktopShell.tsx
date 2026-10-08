@@ -254,7 +254,13 @@ function AppContent({
           </div>
         </div>
         <div className="welcome-art" aria-hidden="true">
-          <span className="sun">LL</span>
+          <img
+            className="welcome-pigeon"
+            src={joinPath(basePath, "/pigeon.svg")}
+            alt=""
+            width="170"
+            height="170"
+          />
           <span className="spark spark-one">✦</span>
           <span className="spark spark-two">✷</span>
           <span className="scribble">
@@ -337,7 +343,12 @@ function AppContent({
     return (
       <div className="about-app">
         <div className="portrait-placeholder" aria-hidden="true">
-          <span>LL</span>
+          <img
+            src={joinPath(basePath, "/pigeon.svg")}
+            alt=""
+            width="112"
+            height="112"
+          />
           <i>✦</i>
         </div>
         <div>
@@ -547,7 +558,12 @@ export default function DesktopShell({
             aria-label="Open welcome window"
             onClick={() => openApp("welcome")}
           >
-            LL
+            <img
+              src={joinPath(basePath, "/pigeon.svg")}
+              alt=""
+              width="30"
+              height="30"
+            />
           </button>
           <Menu label="Lianne">
             <DropdownMenu.Item
