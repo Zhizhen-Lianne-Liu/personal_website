@@ -13,13 +13,6 @@ import { sitePath } from "@/lib/urls";
     {
       projects.map((project) => (
         <article class="card project-card">
-          <div class="project-accent" aria-hidden="true">
-            <>
-              <span />
-              <span />
-              <span />
-            </>
-          </div>
           <div class="card-body">
             <p class="card-kicker">
               {project.status} · {project.year}
@@ -60,31 +53,6 @@ import { sitePath } from "@/lib/urls";
   .project-card p,
   .review-card p {
     color: var(--muted);
-  }
-  .project-accent {
-    display: flex;
-    min-height: 150px;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    border-bottom: var(--line);
-    background: var(--green);
-  }
-  .project-accent span {
-    display: block;
-    width: 54px;
-    height: 54px;
-    border: var(--line);
-    border-radius: 50%;
-    background: var(--coral);
-  }
-  .project-accent span:nth-child(2) {
-    border-radius: 8px;
-    background: var(--yellow);
-    transform: rotate(8deg);
-  }
-  .project-accent span:nth-child(3) {
-    background: var(--blue);
   }
   .project-card .tag-list {
     margin-block: 24px;
