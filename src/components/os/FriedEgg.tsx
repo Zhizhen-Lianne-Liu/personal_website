@@ -15,9 +15,6 @@ interface FragmentSpec {
   width: number;
   height: number;
   delay: number;
-  meldX: number;
-  meldY: number;
-  meldRotation: number;
 }
 
 interface FragmentDrag {
@@ -30,10 +27,26 @@ interface FragmentDrag {
   startRotation: number;
 }
 
-type EggPhase = "ready" | "burst" | "reforming";
+type EggPhase = "ready" | "burst";
 
 type FragmentTemplate = Pick<FragmentSpec, "kind" | "width" | "height">;
 type FragmentStyle = CSSProperties & Record<`--${string}`, string>;
+
+const EGG_WHITE_PATH =
+  "M34 167C10 116 66 79 122 73C161 69 169 15 224 24C278 33 282 76 332 78C384 80 416 118 393 162C371 205 404 249 350 274C303 296 269 259 221 274C170 290 145 259 99 268C47 278 18 222 34 167Z";
+const EGG_YOLK_PATH =
+  "M148 154C148 102 188 73 238 83C287 93 304 138 281 184C258 229 195 228 160 196C148 184 144 169 148 154Z";
+
+const WHITE_FRAGMENT_PATHS = [
+  "M78 161C62 99 121 55 190 62C259 40 340 80 351 145C362 210 304 264 224 255C143 274 94 226 78 161Z",
+  "M94 110C143 54 244 43 315 84C375 119 361 203 294 245C228 286 127 257 84 193C57 151 64 131 94 110Z",
+  "M70 146C80 79 151 43 220 60C292 43 354 98 345 165C355 226 283 266 217 249C151 270 79 222 70 146Z",
+];
+const YOLK_FRAGMENT_PATHS = [
+  "M112 157C111 91 160 56 225 68C293 73 329 126 306 188C286 246 205 264 146 222C122 205 109 183 112 157Z",
+  "M124 133C145 73 211 52 271 76C326 98 335 165 298 211C260 258 180 256 137 211C112 184 109 161 124 133Z",
+  "M102 170C91 110 149 62 211 69C272 53 333 99 326 160C335 218 273 259 211 247C148 262 108 226 102 170Z",
+];
 
 const fragmentTemplates: FragmentTemplate[] = [
   { kind: "white", width: 74, height: 46 },
@@ -74,9 +87,7 @@ function createBurstFragments(impactDistance: number): FragmentSpec[] {
 
   const angleOffset = randomBetween(0, Math.PI * 2);
   const angleStep = (Math.PI * 2) / shuffledTemplates.length;
-  const scatterScale = 0.72 + impactDistance * 0.72;
-  let whiteIndex = 0;
-  let yolkIndex = 0;
+  const scatterScale = 1.44 - impactDistance * 0.72;
 
   return shuffledTemplates.map((fragment, index) => {
     const angle = angleOffset + index * angleStep + randomBetween(-0.18, 0.18);
@@ -84,25 +95,12 @@ function createBurstFragments(impactDistance: number): FragmentSpec[] {
       fragment.kind === "white"
         ? randomBetween(285, 430)
         : randomBetween(205, 345);
-    const kindIndex = fragment.kind === "white" ? whiteIndex++ : yolkIndex++;
-    const kindCount = fragment.kind === "white" ? 12 : 7;
-    const meldAngle = (kindIndex / kindCount) * Math.PI * 2;
-    const meldRadiusX =
-      fragment.kind === "white"
-        ? randomBetween(100, 126)
-        : randomBetween(22, 34);
-    const meldRadiusY =
-      fragment.kind === "white" ? randomBetween(62, 82) : randomBetween(16, 26);
-
     return {
       ...fragment,
       x: Math.cos(angle) * distance * scatterScale,
       y: Math.sin(angle) * distance * 0.78 * scatterScale,
       rotation: randomBetween(-170, 170),
       delay: randomBetween(0, 0.11),
-      meldX: Math.cos(meldAngle) * meldRadiusX,
-      meldY: Math.sin(meldAngle) * meldRadiusY,
-      meldRotation: randomBetween(-18, 18),
     };
   });
 }
@@ -124,11 +122,13 @@ function fragmentStyle(fragment: FragmentSpec): FragmentStyle {
     "--piece-width": `${fragment.width}px`,
     "--piece-height": `${fragment.height}px`,
     "--piece-delay": `${fragment.delay}s`,
-    "--piece-return-delay": `${fragment.delay * 0.5}s`,
-    "--piece-meld-x": `${fragment.meldX}px`,
-    "--piece-meld-y": `${fragment.meldY}px`,
-    "--piece-meld-rotation": `${fragment.meldRotation}deg`,
   };
+}
+
+function fragmentPath(fragment: FragmentSpec, index: number) {
+  const paths =
+    fragment.kind === "white" ? WHITE_FRAGMENT_PATHS : YOLK_FRAGMENT_PATHS;
+  return paths[index % paths.length];
 }
 
 export default function FriedEgg() {
@@ -137,10 +137,9 @@ export default function FriedEgg() {
   const sceneRef = useRef<HTMLDivElement>(null);
   const motionRef = useRef<HTMLDivElement>(null);
   const fragmentDragRef = useRef<FragmentDrag | null>(null);
-  const reformTimerRef = useRef(0);
 
   const startFragmentDrag = (
-    event: ReactPointerEvent<HTMLSpanElement>,
+    event: ReactPointerEvent<SVGSVGElement>,
     index: number,
   ) => {
     const fragment = burstFragments[index];
@@ -160,7 +159,7 @@ export default function FriedEgg() {
     };
   };
 
-  const moveFragment = (event: ReactPointerEvent<HTMLSpanElement>) => {
+  const moveFragment = (event: ReactPointerEvent<SVGSVGElement>) => {
     const drag = fragmentDragRef.current;
     if (!drag || drag.pointerId !== event.pointerId) return;
 
@@ -180,7 +179,7 @@ export default function FriedEgg() {
     );
   };
 
-  const endFragmentDrag = (event: ReactPointerEvent<HTMLSpanElement>) => {
+  const endFragmentDrag = (event: ReactPointerEvent<SVGSVGElement>) => {
     const drag = fragmentDragRef.current;
     if (!drag || drag.pointerId !== event.pointerId) return;
 
@@ -266,59 +265,14 @@ export default function FriedEgg() {
     };
   }, [phase]);
 
-  useEffect(
-    () => () => {
-      window.clearTimeout(reformTimerRef.current);
-    },
-    [],
-  );
-
-  const reformEgg = () => {
+  const resetEgg = () => {
     fragmentDragRef.current = null;
-
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setBurstFragments([]);
-      setPhase("ready");
-      return;
-    }
-
-    setPhase("reforming");
-    window.clearTimeout(reformTimerRef.current);
-    reformTimerRef.current = window.setTimeout(() => {
-      setBurstFragments([]);
-      setPhase("ready");
-    }, 840);
+    setBurstFragments([]);
+    setPhase("ready");
   };
 
   return (
     <div ref={sceneRef} className={`fried-egg-scene is-${phase}`}>
-      <svg
-        className="egg-filter-definitions"
-        width="0"
-        height="0"
-        aria-hidden="true"
-        focusable="false"
-      >
-        <defs>
-          <filter
-            id="egg-fragment-goo"
-            x="-30%"
-            y="-30%"
-            width="160%"
-            height="160%"
-            colorInterpolationFilters="sRGB"
-          >
-            <feGaussianBlur in="SourceGraphic" stdDeviation="7" result="blur" />
-            <feColorMatrix
-              in="blur"
-              mode="matrix"
-              values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7"
-              result="goo"
-            />
-            <feBlend in="SourceGraphic" in2="goo" />
-          </filter>
-        </defs>
-      </svg>
       <div ref={motionRef} className="egg-motion" data-hovered="false">
         <button
           className="fried-egg-button"
@@ -359,15 +313,9 @@ export default function FriedEgg() {
           aria-label="Burst the fried egg"
         >
           <svg viewBox="0 0 430 310" role="img" aria-label="A jiggly fried egg">
-            <path
-              className="egg-white"
-              d="M34 167C10 116 66 79 122 73C161 69 169 15 224 24C278 33 282 76 332 78C384 80 416 118 393 162C371 205 404 249 350 274C303 296 269 259 221 274C170 290 145 259 99 268C47 278 18 222 34 167Z"
-            />
+            <path className="egg-white" d={EGG_WHITE_PATH} />
             <g className="egg-yolk-group">
-              <path
-                className="egg-yolk"
-                d="M148 154C148 102 188 73 238 83C287 93 304 138 281 184C258 229 195 228 160 196C148 184 144 169 148 154Z"
-              />
+              <path className="egg-yolk" d={EGG_YOLK_PATH} />
               <ellipse
                 className="egg-shine"
                 cx="209"
@@ -382,31 +330,46 @@ export default function FriedEgg() {
 
       {burstFragments.length > 0 && (
         <div className="egg-fragments" aria-hidden="true">
-          {burstFragments.map((fragment, index) => (
-            <span
-              key={`${fragment.kind}-${index}`}
-              className={`egg-fragment fragment-${fragment.kind}`}
-              style={fragmentStyle(fragment)}
-              onPointerDown={(event) => startFragmentDrag(event, index)}
-              onPointerMove={moveFragment}
-              onPointerUp={endFragmentDrag}
-              onPointerCancel={endFragmentDrag}
-            ></span>
+          {(["white", "yolk"] as const).map((kind) => (
+            <div
+              key={kind}
+              className={`egg-fragment-layer egg-fragment-layer-${kind}`}
+            >
+              {burstFragments.map((fragment, index) =>
+                fragment.kind === kind ? (
+                  <svg
+                    key={`${fragment.kind}-${index}`}
+                    className={`egg-fragment fragment-${fragment.kind}`}
+                    style={fragmentStyle(fragment)}
+                    viewBox="0 0 430 310"
+                    preserveAspectRatio="none"
+                    onPointerDown={(event) => startFragmentDrag(event, index)}
+                    onPointerMove={moveFragment}
+                    onPointerUp={endFragmentDrag}
+                    onPointerCancel={endFragmentDrag}
+                  >
+                    <path
+                      className="egg-fragment-shape"
+                      d={fragmentPath(fragment, index)}
+                      vectorEffect="non-scaling-stroke"
+                    />
+                  </svg>
+                ) : null,
+              )}
+            </div>
           ))}
         </div>
       )}
 
       {phase === "burst" && (
-        <button className="egg-reset" type="button" onClick={reformEgg}>
+        <button className="egg-reset" type="button" onClick={resetEgg}>
           Fry another egg
         </button>
       )}
       <span className="sr-only" aria-live="polite">
         {phase === "burst"
           ? "The fried egg burst into pieces."
-          : phase === "reforming"
-            ? "The egg pieces are melding back together."
-            : "The fried egg is ready."}
+          : "The fried egg is ready."}
       </span>
     </div>
   );

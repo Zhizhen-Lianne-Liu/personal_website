@@ -8,11 +8,6 @@
   pointer-events: none;
 }
 
-.egg-filter-definitions {
-  position: absolute;
-  overflow: hidden;
-}
-
 .egg-motion {
   --egg-rotate: 0deg;
   --egg-x: 0px;
@@ -48,7 +43,7 @@
 .egg-white {
   fill: var(--os-cream);
   stroke: var(--os-ink);
-  stroke-width: 6;
+  stroke-width: 2.5;
   stroke-linejoin: round;
   cursor: crosshair;
 }
@@ -63,7 +58,7 @@
 .egg-yolk {
   fill: var(--os-yellow);
   stroke: var(--os-ink);
-  stroke-width: 6;
+  stroke-width: 2.5;
   stroke-linejoin: round;
   cursor: crosshair;
 }
@@ -85,15 +80,20 @@
   pointer-events: none;
 }
 
-.is-reforming .egg-motion {
-  animation: egg-reform 780ms cubic-bezier(0.2, 0.78, 0.24, 1) forwards;
-  pointer-events: none;
-}
-
 .egg-fragments {
   position: absolute;
   inset: 0;
   pointer-events: none;
+}
+
+.egg-fragment-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.egg-fragment-layer-yolk {
+  z-index: 1;
 }
 
 .egg-fragment {
@@ -111,17 +111,27 @@
   user-select: none;
 }
 
-.egg-fragment::before {
-  position: absolute;
-  inset: 0;
-  border: 2px solid var(--os-ink);
-  content: "";
+.egg-fragment-shape {
+  fill: var(--os-cream);
+  stroke: var(--os-ink);
+  stroke-width: 2.5;
+  stroke-linejoin: round;
+  transform-box: fill-box;
+  transform-origin: center;
   transition:
     filter 120ms ease,
     transform 120ms ease;
 }
 
-.egg-fragment:hover::before {
+.fragment-yolk {
+  z-index: 1;
+}
+
+.fragment-yolk .egg-fragment-shape {
+  fill: var(--os-yellow);
+}
+
+.egg-fragment:hover .egg-fragment-shape {
   filter: brightness(1.04);
   transform: scale(1.06);
 }
@@ -130,46 +140,9 @@
   cursor: grabbing;
 }
 
-.egg-fragment[data-dragging="true"]::before {
+.egg-fragment[data-dragging="true"] .egg-fragment-shape {
   filter: brightness(1.08);
   transform: scale(1.1) rotate(2deg);
-}
-
-.is-reforming .egg-fragment {
-  animation: egg-piece-meld 760ms cubic-bezier(0.55, 0, 0.3, 1)
-    var(--piece-return-delay) forwards;
-  pointer-events: none;
-}
-
-.is-reforming .egg-fragments {
-  filter: url("#egg-fragment-goo");
-}
-
-.is-reforming .egg-fragment::before {
-  animation: egg-piece-surface-meld 760ms cubic-bezier(0.55, 0, 0.3, 1)
-    var(--piece-return-delay) forwards;
-}
-
-.fragment-white::before {
-  border-radius: 63% 37% 58% 42% / 44% 62% 38% 56%;
-  background: var(--os-cream);
-}
-
-.fragment-yolk::before {
-  border-radius: 55% 45% 69% 31% / 39% 57% 43% 61%;
-  background: var(--os-yellow);
-}
-
-.egg-fragment:nth-child(3n)::before {
-  border-radius: 47% 53% 39% 61% / 58% 42% 56% 44%;
-}
-
-.egg-fragment:nth-child(4n)::before {
-  border-radius: 68% 32% 55% 45% / 41% 64% 36% 59%;
-}
-
-.egg-fragment:nth-child(5n)::before {
-  border-radius: 42% 58% 65% 35% / 67% 38% 62% 33%;
 }
 
 .egg-reset {
@@ -220,26 +193,6 @@
   }
 }
 
-@keyframes egg-reform {
-  0%,
-  68% {
-    opacity: 0;
-    transform: scale(0.82, 0.68);
-  }
-  82% {
-    opacity: 1;
-    transform: scale(1.1, 0.9);
-  }
-  90% {
-    opacity: 1;
-    transform: scale(0.97, 1.04);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
 @keyframes egg-piece-fly {
   0% {
     opacity: 0;
@@ -255,53 +208,6 @@
         calc(-50% + var(--piece-y))
       )
       rotate(var(--piece-rotation)) scale(1);
-  }
-}
-
-@keyframes egg-piece-meld {
-  0% {
-    opacity: 1;
-    transform: translate(
-        calc(-50% + var(--piece-x)),
-        calc(-50% + var(--piece-y))
-      )
-      rotate(var(--piece-rotation)) scale(1);
-  }
-  58% {
-    opacity: 1;
-    transform: translate(
-        calc(-50% + var(--piece-meld-x)),
-        calc(-50% + var(--piece-meld-y))
-      )
-      rotate(var(--piece-meld-rotation)) scale(1.08, 0.88);
-  }
-  84% {
-    opacity: 1;
-    transform: translate(
-        calc(-50% + var(--piece-meld-x)),
-        calc(-50% + var(--piece-meld-y))
-      )
-      rotate(var(--piece-meld-rotation)) scale(1.48, 1.3);
-  }
-  100% {
-    opacity: 0;
-    transform: translate(
-        calc(-50% + var(--piece-meld-x)),
-        calc(-50% + var(--piece-meld-y))
-      )
-      rotate(var(--piece-meld-rotation)) scale(1.62, 1.46);
-  }
-}
-
-@keyframes egg-piece-surface-meld {
-  0%,
-  52% {
-    border-color: var(--os-ink);
-  }
-  82%,
-  100% {
-    border-color: transparent;
-    border-radius: 50%;
   }
 }
 
