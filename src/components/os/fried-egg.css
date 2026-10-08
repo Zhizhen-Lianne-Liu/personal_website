@@ -43,7 +43,7 @@
 .egg-white {
   fill: var(--os-cream);
   stroke: var(--os-ink);
-  stroke-width: 6;
+  stroke-width: 2.5;
   stroke-linejoin: round;
   cursor: crosshair;
 }
@@ -58,7 +58,7 @@
 .egg-yolk {
   fill: var(--os-yellow);
   stroke: var(--os-ink);
-  stroke-width: 6;
+  stroke-width: 2.5;
   stroke-linejoin: round;
   cursor: crosshair;
 }
@@ -86,6 +86,16 @@
   pointer-events: none;
 }
 
+.egg-fragment-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.egg-fragment-layer-yolk {
+  z-index: 1;
+}
+
 .egg-fragment {
   position: absolute;
   top: 50%;
@@ -95,35 +105,44 @@
   opacity: 0;
   animation: egg-piece-fly 1.05s cubic-bezier(0.16, 0.74, 0.28, 1.15)
     var(--piece-delay) forwards;
+  cursor: grab;
+  pointer-events: auto;
+  touch-action: none;
+  user-select: none;
 }
 
-.egg-fragment::before {
-  position: absolute;
-  inset: 0;
-  border: 2px solid var(--os-ink);
-  content: "";
+.egg-fragment-shape {
+  fill: var(--os-cream);
+  stroke: var(--os-ink);
+  stroke-width: 2.5;
+  stroke-linejoin: round;
+  transform-box: fill-box;
+  transform-origin: center;
+  transition:
+    filter 120ms ease,
+    transform 120ms ease;
 }
 
-.fragment-white::before {
-  border-radius: 63% 37% 58% 42% / 44% 62% 38% 56%;
-  background: var(--os-cream);
+.fragment-yolk {
+  z-index: 1;
 }
 
-.fragment-yolk::before {
-  border-radius: 55% 45% 69% 31% / 39% 57% 43% 61%;
-  background: var(--os-yellow);
+.fragment-yolk .egg-fragment-shape {
+  fill: var(--os-yellow);
 }
 
-.egg-fragment:nth-child(3n)::before {
-  border-radius: 47% 53% 39% 61% / 58% 42% 56% 44%;
+.egg-fragment:hover .egg-fragment-shape {
+  filter: brightness(1.04);
+  transform: scale(1.06);
 }
 
-.egg-fragment:nth-child(4n)::before {
-  border-radius: 68% 32% 55% 45% / 41% 64% 36% 59%;
+.egg-fragment[data-dragging="true"] {
+  cursor: grabbing;
 }
 
-.egg-fragment:nth-child(5n)::before {
-  border-radius: 42% 58% 65% 35% / 67% 38% 62% 33%;
+.egg-fragment[data-dragging="true"] .egg-fragment-shape {
+  filter: brightness(1.08);
+  transform: scale(1.1) rotate(2deg);
 }
 
 .egg-reset {
