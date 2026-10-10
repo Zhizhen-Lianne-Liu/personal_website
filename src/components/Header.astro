@@ -2,9 +2,9 @@
 import { sitePath } from "@/lib/urls";
 
 const navigation = [
-  { href: "/work/", label: "Work" },
+  { href: "/work/", label: "Projects" },
   { href: "/writing/", label: "Writing" },
-  { href: "/about/", label: "About" },
+  { href: "/about/", label: "About me" },
 ];
 
 const currentPath = Astro.url.pathname;
@@ -30,7 +30,7 @@ const isCurrent = (href: string) => currentPath.startsWith(sitePath(href));
         ))
       }
       <a class="nav-contact" href={sitePath("/contact/")}
-        >Let&rsquo;s talk <span aria-hidden="true">↗</span></a
+        >Say hello <span aria-hidden="true">↗</span></a
       >
     </nav>
 
@@ -47,7 +47,7 @@ const isCurrent = (href: string) => currentPath.startsWith(sitePath(href));
             </a>
           ))
         }
-        <a href={sitePath("/contact/")}>Contact</a>
+        <a href={sitePath("/contact/")}>Say hello</a>
       </nav>
     </details>
   </div>

@@ -152,11 +152,11 @@
   z-index: 3;
   padding: 9px 13px;
   border: 2px solid var(--os-ink);
-  border-radius: 6px;
+  border-radius: var(--radius);
   background: var(--os-yellow);
   box-shadow: 3px 3px 0 var(--os-ink);
   color: var(--os-ink);
-  font-size: 0.72rem;
+  font-size: 1rem;
   font-weight: 850;
   cursor: pointer;
   opacity: 0;
