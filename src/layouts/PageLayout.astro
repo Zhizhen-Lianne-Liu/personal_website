@@ -4,7 +4,7 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 interface Props {
   title: string;
   description: string;
-  eyebrow: string;
+  eyebrow?: string;
 }
 
 const { title, description, eyebrow } = Astro.props;
@@ -13,7 +13,7 @@ const { title, description, eyebrow } = Astro.props;
 <BaseLayout title={title} description={description}>
   <header class="page-hero">
     <div class="shell">
-      <p class="eyebrow">{eyebrow}</p>
+      {eyebrow && <p class="eyebrow">{eyebrow}</p>}
       <h1>{title}</h1>
       <p class="page-intro">{description}</p>
     </div>

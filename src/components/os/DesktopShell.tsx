@@ -55,14 +55,14 @@ const apps: AppDefinition[] = [
   {
     id: "about",
     label: "About me",
-    subtitle: "A short intro",
+    subtitle: "About me",
     route: "/about/",
     icon: CircleUserRound,
     color: "var(--os-green)",
   },
   {
     id: "work",
-    label: "Selected work",
+    label: "Projects",
     subtitle: "Projects",
     route: "/work/",
     icon: BriefcaseBusiness,
@@ -71,7 +71,7 @@ const apps: AppDefinition[] = [
   {
     id: "writing",
     label: "Writing",
-    subtitle: "Notes & essays",
+    subtitle: "Writing",
     route: "/writing/",
     icon: BookOpenText,
     color: "var(--os-yellow)",
@@ -79,7 +79,7 @@ const apps: AppDefinition[] = [
   {
     id: "contact",
     label: "Say hello",
-    subtitle: "Contact",
+    subtitle: "Say hello",
     route: "/contact/",
     icon: Mail,
     color: "var(--os-lilac)",
@@ -242,7 +242,6 @@ function AppContent({
       <div className="writing-app">
         <div className="app-heading">
           <div>
-            <p className="os-overline">Notebook</p>
             <h2>Writing</h2>
           </div>
         </div>
@@ -268,8 +267,15 @@ function AppContent({
     return (
       <div className="about-app">
         <div>
-          <p className="os-overline">A short introduction</p>
-          <h1>Hello, I&rsquo;m Lianne.</h1>
+          <div className="about-heading">
+            <img
+              src={joinPath(basePath, "/pigeon.svg")}
+              alt=""
+              width="140"
+              height="140"
+            />
+            <h1>Hello, I&rsquo;m Lianne.</h1>
+          </div>
           <p>
             I care about making complicated things more legible, useful, and
             human. This site is a growing record of selected work and ideas.
@@ -288,7 +294,6 @@ function AppContent({
 
   return (
     <div className="contact-app">
-      <p className="os-overline">Contact card</p>
       <h2>Let&rsquo;s make something interesting.</h2>
       <p>
         The best current place to find me is GitHub. More contact details can be
@@ -492,7 +497,7 @@ export default function DesktopShell({
               className="menu-item"
               onSelect={() => openApp("contact")}
             >
-              Contact
+              Say hello
             </DropdownMenu.Item>
           </Menu>
           <Menu label="Go">
@@ -500,7 +505,7 @@ export default function DesktopShell({
               className="menu-item"
               onSelect={() => openApp("work")}
             >
-              Selected work
+              Projects
             </DropdownMenu.Item>
             <DropdownMenu.Item
               className="menu-item"
@@ -512,7 +517,7 @@ export default function DesktopShell({
               className="menu-item"
               onSelect={() => openApp("about")}
             >
-              About
+              About me
             </DropdownMenu.Item>
           </Menu>
           <Menu label="View">
